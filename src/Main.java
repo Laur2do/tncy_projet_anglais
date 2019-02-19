@@ -1,11 +1,10 @@
-import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
 import model.*;
+import model.loader.InvalidGridFileException;
+import model.loader.InvalidWordFileException;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 
 public class Main{
@@ -22,11 +21,25 @@ public class Main{
     public static void main(String[] args) {
        // launch(args);
         Game g = Game.getInstance();
-        g.loadData("data.csv");
-        ArrayList<Word> arraylist = g.getListofWords();
-        for(Word w : arraylist){
-            System.out.println(w.toString());
+        try {
+            int loadedWords = g.loadWords("data/words.csv");
+            System.out.println("Loaded " + loadedWords + " words");
+            HashMap<String, Word> words = g.getWords();
+            for (Word w : words.values()) {
+                System.out.println(w.toString());
+            }
+
+            int gridLoaded = g.loadGrids("data/grids");
+
+            System.out.println("Loaded " + gridLoaded + " grids");
+        }catch(InvalidWordFileException e) {
+            e.printStackTrace();
+        } catch (InvalidGridFileException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+
 
     }
 

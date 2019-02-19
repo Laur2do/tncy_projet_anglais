@@ -4,10 +4,95 @@ import java.util.ArrayList;
 
 public class Grid {
 
-    public static final int numberOfWords = 10;
+    public static final int NUMBER_OF_WORDS = 10;
+    public static final int MAX_GRID_WIDTH = 50;
+    public static final int MAX_GRID_HEIGHT = 50;
 
-    private ArrayList<GridWord> listOfWords;
+    private Cell[][] grid;
+
+    private ArrayList<GridWord> placedWords;
+
+
+    //private ArrayList<Word> wordsToPlace;
 
     public Grid() {
+        this(MAX_GRID_WIDTH, MAX_GRID_HEIGHT);
+    }
+
+    public Grid(int width, int height) {
+        grid = new Cell[width][height];
+        placedWords = new ArrayList<>();
+        //wordsToPlace = new ArrayList<>();
+    }
+
+    @Override
+    public String toString() {
+        return gridToString(this.grid);
+    }
+
+    private static String gridToString(Cell[][] grid) {
+        if (grid == null) {
+            return null;
+        }
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("\t");
+        for(int colName = 0; colName < grid.length; ++colName) {
+            sb.append(colName);
+            sb.append(' ');
+        }
+        sb.append('\n');
+
+        for(int i = 0; i < grid.length; ++i) {
+            sb.append(i);
+            sb.append("\t");
+            for(int j = 0; j < grid.length; ++j) {
+                if( grid[j][i] == null ) {
+                    sb.append(' ');
+                } else {
+                    sb.append(grid[j][i].toString());
+                }
+                sb.append(' ');
+            }
+            sb.append('\n');
+        }
+        return sb.toString();
+    }
+
+    public GridWord placeWord(Word w, Orientation direction, int firstCharX, int firstCharY) {
+        int wordLength = w.getLength();
+        if( direction == Orientation.VERTICAL && firstCharY+wordLength > grid.length ||
+                direction == Orientation.HORIZONTAL && firstCharX+wordLength > grid[0].length) {
+            return null;
+        }
+
+        for (int k = 0; k < wordLength; ++k) {
+            if (direction == Orientation.VERTICAL) {
+                if ( grid[firstCharX][firstCharY + k] != null ) {
+                    if( grid[firstCharX][firstCharY + k].getLetter() == w.getLetter(k)) {
+                        // The letter is already correct
+                        continue;
+                    } else {
+                        return null;
+                    }
+                }
+                grid[firstCharX][firstCharY + k] = new Cell(w.getLetter(k));
+            }else {
+                if ( grid[firstCharX + k][firstCharY] != null ) {
+                    if( grid[firstCharX + k][firstCharY].getLetter() == w.getLetter(k)) {
+                        // The letter is already correct
+                        continue;
+                    } else {
+                        return null;
+                    }
+                }
+                grid[firstCharX + k][firstCharY] = new Cell(w.getLetter(k));
+            }
+        }
+        GridWord wig = new GridWord(w, direction, firstCharX, firstCharY);
+        //wordsToPlace.remove(w); //FIXME
+        placedWords.add(wig);
+        System.out.println(gridToString(grid));
+        return wig;
     }
 }

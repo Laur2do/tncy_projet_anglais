@@ -7,15 +7,29 @@ public class GridWord extends Word{
     private Orientation orientation;
     private boolean[] revealedLetters;
 
-    public GridWord(String word, String englishDefinition, String frenchDefinition, Orientation orientation) throws WordException{
-        super(word, englishDefinition, frenchDefinition);
+    private int firstCharX;
+    private int firstCharY;
+
+    public GridWord(Word word, Orientation orientation, int firstCharX, int firstCharY) {
+        super(word);
         this.orientation = orientation;
+        this.firstCharX = firstCharX;
+        this.firstCharY = firstCharY;
+
         this.revealedLetters = new boolean[this.length];
         Arrays.fill(this.revealedLetters, false);
     }
 
     public Orientation getOrientation() {
         return orientation;
+    }
+
+    public int getX() {
+        return firstCharX;
+    }
+
+    public int getY() {
+        return firstCharY;
     }
 
     public boolean[] getRevealedLetters() {
