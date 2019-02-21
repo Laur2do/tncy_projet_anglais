@@ -23,8 +23,8 @@ public class Game {
 
     }
 
-    public static Game getInstance(){
-        if (instance == null){
+    public static Game getInstance() {
+        if (instance == null) {
             instance = new Game();
         }
         return instance;
@@ -34,13 +34,13 @@ public class Game {
         return listOfGrids;
     }
 
-    public void addGrid(Grid grid){
+    public void addGrid(Grid grid) {
         this.listOfGrids.add(grid);
     }
 
-   public void addWord(Word word){
+    public void addWord(Word word) {
         this.words.put(word.getContent(), word);
-   }
+    }
 
     public HashMap<String, Word> getWords() {
         return words;
@@ -52,16 +52,31 @@ public class Game {
 
     public int loadGrids(String folderPath) throws InvalidGridFileException, IOException {
         File folder = new File(folderPath);
-        if ( ! folder.isDirectory()) {
+        if (!folder.isDirectory()) {
             throw new NotDirectoryException(folderPath);
         }
         File[] gridFiles = folder.listFiles((File directory, String fileName) -> fileName.endsWith(".csv"));
         int gridsLoaded = 0;
-        for( File gridFile : gridFiles) {
+        for (File gridFile : gridFiles) {
             DataLoader.loadGridFile(gridFile.getCanonicalPath());
             gridsLoaded++;
         }
         return gridsLoaded;
+    }
+
+
+    public Grid getRandomGrid() {
+        int index = (int)(Math.random()*this.listOfGrids.size());
+        return this.listOfGrids.get(index);
+    }
+
+    public static boolean validLetter(String s) {
+        return s.length() == 1 && validLetter(s.charAt(0));
+    }
+
+    public static boolean validLetter(char  c) {
+        c = Character.toUpperCase(c);
+        return c >= 'A' && c <= 'Z';
     }
 
 

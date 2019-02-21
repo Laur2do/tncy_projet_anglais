@@ -1,20 +1,40 @@
 package model;
 
-public class Cell {
-    private char letter;
+import java.util.Observable;
+import java.util.Observer;
+
+public class Cell implements Observer {
+    public static final char NO_LETTER_CHAR = ' ';
+    public static final char NOT_REVEALED_LETTER_CHAR = '*';
+
+    private int wordIndex;
+    private GridWord word;
+    private boolean revealed;
 
     public char getLetter() {
-        return letter;
+        return word.getLetter(wordIndex);
     }
 
-    public Cell(char letter) {
-        this.letter = letter;
+    public Cell(GridWord w, int wordIndex) {
+        this.word = w;
+        this.wordIndex = wordIndex;
+        this.revealed = false;
+        w.addObserver(this);
     }
-
-    public static final char NO_LETTER_CHAR = ' ';
 
     @Override
     public String toString() {
-        return String.valueOf(letter);
+        if (revealed) {
+            return String.valueOf(word.getLetter(wordIndex));
+        } else {
+            return String.valueOf(NOT_REVEALED_LETTER_CHAR);
+        }
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        if (o == word) {
+            revealed = word.getRevealedLetters()[wordIndex];
+        }
     }
 }

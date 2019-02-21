@@ -2,7 +2,7 @@ package model;
 
 import java.util.Arrays;
 
-public class GridWord extends Word{
+public class GridWord extends Word {
 
     private Orientation orientation;
     private boolean[] revealedLetters;
@@ -36,11 +36,31 @@ public class GridWord extends Word{
         return revealedLetters;
     }
 
-    public void setRevealedLetters(boolean[] revealedLetters) {
-        this.revealedLetters = revealedLetters;
+    public boolean isRevealed() {
+        for (boolean revealedLetter : revealedLetters) {
+            if (!revealedLetter) {
+                return false;
+            }
+        }
+        return true;
     }
 
-    //TODO : set revealed pour une ou plusieurs lettres (si un autre mot est découvert)
 
+    public void revealLetter(int index) {
+        assert (index > 0 && index < revealedLetters.length);
+        this.revealedLetters[index] = true;
+        setChanged();
+        notifyObservers();
+    }
+
+    public void revealLetter(char letter) {
+        for (int i = 0; i < this.content.length(); i++) {
+            if (this.content.charAt(i) == Character.toUpperCase(letter)) {
+                this.revealedLetters[i] = true;
+            }
+        }
+        setChanged();
+        notifyObservers();
+    }
 
 }
