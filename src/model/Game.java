@@ -2,10 +2,11 @@ package model;
 
 import model.loader.DataLoader;
 import model.loader.InvalidGridFileException;
+import model.loader.InvalidQuestionFileException;
 import model.loader.InvalidWordFileException;
 
 import java.io.File;
-import java.io.FilenameFilter;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.NotDirectoryException;
 import java.util.ArrayList;
@@ -16,10 +17,15 @@ public class Game {
     private static Game instance;
     private ArrayList<Grid> listOfGrids;
     private HashMap<String, Word> words;
+    private HashMap<Character, ArrayList<Question>> questions;
 
     private Game() {
         this.listOfGrids = new ArrayList<>();
         this.words = new HashMap<>();
+        this.questions = new HashMap<>();
+        for(char letter = 'A'; letter <= 'Z'; letter++) {
+            this.questions.put(letter, new ArrayList<>());
+        }
 
     }
 
@@ -42,12 +48,16 @@ public class Game {
         this.words.put(word.getContent(), word);
     }
 
+    public void addQuestion(Question question) {
+        questions.get(question.getLetter()).add(question);
+    }
+
     public HashMap<String, Word> getWords() {
         return words;
     }
 
     public int loadWords(String filePath) throws InvalidWordFileException {
-        return DataLoader.loadCSVFile(filePath);
+        return DataLoader.loadWordFile(filePath);
     }
 
     public int loadGrids(String folderPath) throws InvalidGridFileException, IOException {
@@ -56,6 +66,9 @@ public class Game {
             throw new NotDirectoryException(folderPath);
         }
         File[] gridFiles = folder.listFiles((File directory, String fileName) -> fileName.endsWith(".csv"));
+        if (gridFiles == null) {
+            throw new FileNotFoundException("Cant find any CSV files in "+folderPath);
+        }
         int gridsLoaded = 0;
         for (File gridFile : gridFiles) {
             DataLoader.loadGridFile(gridFile.getCanonicalPath());
@@ -68,6 +81,20 @@ public class Game {
     public Grid getRandomGrid() {
         int index = (int)(Math.random()*this.listOfGrids.size());
         return this.listOfGrids.get(index);
+    }
+
+    public int loadQuestions(String filePath) throws InvalidQuestionFileException {
+        return DataLoader.loadQuestionFile(filePath);
+    }
+
+
+    public Question getRandomQuestionForLetter(char letter) {
+        ArrayList<Question> letterQuestions = questions.get(letter);
+        if( letterQuestions.size() == 0 ) {
+            return null;
+        }
+        int index = (int)(Math.random()*letterQuestions.size());
+        return letterQuestions.get(index);
     }
 
     public static boolean validLetter(String s) {

@@ -1,5 +1,6 @@
 import model.*;
 import model.loader.InvalidGridFileException;
+import model.loader.InvalidQuestionFileException;
 import model.loader.InvalidWordFileException;
 
 import java.io.IOException;
@@ -37,25 +38,47 @@ public class Main {
 
             System.out.println("Loaded " + gridLoaded + " grids");
 
+            int questionsLoaded = game.loadQuestions("data/questions.csv");
+
+            System.out.println("Loaded " + questionsLoaded + " questions");
+
             Grid grid = game.getRandomGrid();
             System.out.println(grid.shortInfo());
             System.out.println(grid.toString());
 
             Scanner scanner = new Scanner(System.in);
             while (!grid.isRevealed()) {
-                System.out.print("Pick a letter\n> ");
+                Question q = grid.getRandomQuestionForRemainingLetters();
+
+                System.out.print("Here is the question: \t" + q + "\n> ");
                 String answer = scanner.next();
-                if (!Game.validLetter(answer)) {
+                while (!Game.validLetter(answer)) {
                     System.err.println("Please enter a valid letter");
+                    System.out.print("Here is the question: \t" + q + "\n> ");
+                    answer = scanner.next();
+                }
+                if (!q.validate(answer)) {
+                    System.out.println("Wrong answer!");
+                    System.out.println("Correct answer was: "+q.getLetter());
+                    if(q.getExplanation() != null ) {
+                        System.out.println("\tBecause "+q.getExplanation());
+                    }
                     continue;
                 }
+
+                // We have a correct answer
+                System.out.println("Correct!");
+                if(q.getExplanation() != null ) {
+                    System.out.println("\tBecause " + q.getExplanation());
+                }
+
                 char c = Character.toUpperCase(answer.charAt(0));
                 grid.revealLetter(c);
                 System.out.println(grid.toString());
             }
 
             System.out.println("Congratulations!");
-        } catch (InvalidWordFileException | InvalidGridFileException | IOException e) {
+        } catch (InvalidWordFileException | InvalidGridFileException | InvalidQuestionFileException | IOException e) {
             e.printStackTrace();
         }
     }

@@ -5,13 +5,12 @@ import java.util.ArrayList;
 public class Grid {
 
     public static final int NUMBER_OF_WORDS = 10;
-    public static final int MAX_GRID_WIDTH = 50;
-    public static final int MAX_GRID_HEIGHT = 50;
+    private static final int MAX_GRID_WIDTH = 50;
+    private static final int MAX_GRID_HEIGHT = 50;
 
     private Cell[][] grid;
 
     private ArrayList<GridWord> placedWords;
-
 
     private ArrayList<Word> wordsToPlace;
 
@@ -39,7 +38,7 @@ public class Grid {
     }
 
     public String shortInfo() {
-        return "Grid "+grid[0].length+"x"+grid.length+", "+placedWords.size()+" words";
+        return "Grid " + grid[0].length + "x" + grid.length + ", " + placedWords.size() + " words";
     }
 
     private static String gridToString(Cell[][] grid) {
@@ -84,6 +83,21 @@ public class Grid {
         for (GridWord gridWord : placedWords) {
             gridWord.revealLetter(letter);
         }
+    }
+
+    public Question getRandomQuestionForRemainingLetters() {
+        ArrayList<Character> remainingLetters = new ArrayList<>();
+        for (GridWord gridWord : placedWords) {
+            boolean[] revealedLetters = gridWord.getRevealedLetters();
+            for (int i = 0; i < revealedLetters.length; i++) {
+                if (!revealedLetters[i]) {
+                    remainingLetters.add(gridWord.getLetter(i));
+                }
+            }
+        }
+        int index = (int)(Math.random()*remainingLetters.size());
+        char letter = remainingLetters.get(index);
+        return Game.getInstance().getRandomQuestionForLetter(letter);
     }
 
     public GridWord placeWord(Word w, Orientation direction, int firstCharX, int firstCharY) {

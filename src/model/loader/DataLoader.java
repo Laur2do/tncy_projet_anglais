@@ -5,7 +5,6 @@ import model.*;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.MissingResourceException;
 
@@ -18,7 +17,7 @@ public class DataLoader {
      * @return The number of line correctly parsed
      * @throws InvalidWordFileException When the file is incorrect
      */
-    public static int loadCSVFile(String path) throws InvalidWordFileException {
+    public static int loadWordFile(String path) throws InvalidWordFileException {
         int lineNumber = 0;
         int loadedWords = 0;
         try {
@@ -65,7 +64,7 @@ public class DataLoader {
     }
 
     /**
-     * Loads a text file containing a grid
+     * Loads a CSV file containing a grid
      *
      * @param path Path to the file to load
      * @throws InvalidGridFileException When the file is incorrect
@@ -132,6 +131,50 @@ public class DataLoader {
             System.err.println("Read error on file " + path);
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Loads a CSV file containing series of questions of which answers are letter
+     *
+     * @param path Path to the file to load
+     * @return The number of line correctly parsed
+     * @throws InvalidQuestionFileException When the file is incorrect
+     */
+    public static int loadQuestionFile(String path) throws InvalidQuestionFileException {
+        int lineNumber = 0;
+        try {
+            BufferedReader source_file = new BufferedReader(new FileReader(path));
+            String line;
+
+            // We kip the first line (it is the header)
+            source_file.readLine();
+
+            while ((line = source_file.readLine()) != null) {
+                lineNumber++;
+
+                String[] tabStrings = line.split(",");
+
+                if (tabStrings.length < 2) {
+                    throw new InvalidQuestionFileException(path, lineNumber, line, "Each line in a Question file must contain a Question, an answer and an optional explanation");
+                }
+
+                if (!Game.validLetter(tabStrings[1])) {
+                    throw new InvalidQuestionFileException(path, lineNumber, line, "Second item must be a letter");
+                }
+                char letter = tabStrings[1].toUpperCase().charAt(0);
+                String explanation = null;
+                if (tabStrings.length > 2 && tabStrings[2].length() > 1) {
+                    explanation = tabStrings[2];
+                }
+                Game.getInstance().addQuestion(new Question(tabStrings[0], letter, explanation));
+            }
+
+        } catch (IOException e) {
+            System.err.println("Read error on file " + path);
+            e.printStackTrace();
+        }
+
+        return lineNumber;
     }
 
 
