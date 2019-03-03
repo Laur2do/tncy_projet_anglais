@@ -37,8 +37,18 @@ public class Grid {
         return grid.length;
     }
 
+    public Cell[] getColumn(int i) {
+        return grid[i];
+    }
+
     public String shortInfo() {
-        return "Grid " + grid[0].length + "x" + grid.length + ", " + placedWords.size() + " words";
+        return "GridCtl " + grid[0].length + "x" + grid.length + ", " + placedWords.size() + " words";
+    }
+
+    public void reset() {
+        for (GridWord word : placedWords) {
+            word.reset();
+        }
     }
 
     private static String gridToString(Cell[][] grid) {
@@ -95,15 +105,18 @@ public class Grid {
                 }
             }
         }
-        int index = (int)(Math.random()*remainingLetters.size());
+        if (remainingLetters.isEmpty()) {
+            return null;
+        }
+        int index = (int) (Math.random() * remainingLetters.size());
         char letter = remainingLetters.get(index);
         return Game.getInstance().getRandomQuestionForLetter(letter);
     }
 
     public ArrayList<GridWord> getNonRevealedWords() {
         ArrayList<GridWord> nonRevealedWords = new ArrayList<>();
-        for(GridWord w: this.placedWords) {
-            if(!w.isRevealed()) {
+        for (GridWord w : this.placedWords) {
+            if (!w.isRevealed()) {
                 nonRevealedWords.add(w);
             }
         }

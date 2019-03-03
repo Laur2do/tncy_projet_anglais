@@ -1,0 +1,25 @@
+.cell {
+    -fx-border-color: #dedede;
+    -fx-background-color: #3D6CF7;
+    -fx-alignment: center;
+    -fx-font-weight: bold;
+    -fx-pref-width: 30px;
+    -fx-text-fill: white;
+}
+
+.grid {
+    -fx-background-color: #F7F1C0;
+}
+
+.success {
+    -fx-text-fill: #48A43B;
+}
+
+.error {
+    -fx-text-fill: #B22D24;
+}
+
+.error-critical {
+    -fx-text-fill: #F70000;
+    -fx-font-weight: bold;
+}

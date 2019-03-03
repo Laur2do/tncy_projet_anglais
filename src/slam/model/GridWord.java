@@ -70,6 +70,14 @@ public class GridWord extends Word {
         notifyObservers();
     }
 
+    public void reset() {
+        for (int i = 0; i < this.content.length(); i++) {
+            this.revealedLetters[i] = false;
+        }
+        setChanged();
+        notifyObservers();
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();

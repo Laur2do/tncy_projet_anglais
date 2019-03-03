@@ -57,6 +57,7 @@ public class Word extends Observable {
             init(content.content, content.englishDefinition, content.frenchDefinition);
         } catch (WordException e) {
             System.err.println("Creating a Word from a Word caused an exception");
+            e.printStackTrace();
             System.exit(-1);
         }
     }

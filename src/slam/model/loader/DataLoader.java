@@ -72,7 +72,7 @@ public class DataLoader {
     public static void loadGridFile(String path) throws InvalidGridFileException {
         HashMap<String, Word> gameWords = Game.getInstance().getWords();
         if (gameWords.size() == 0) {
-            throw new MissingResourceException("Can't load Grid if words aren't loaded", "Game", "listOfWords");
+            throw new MissingResourceException("Can't load GridCtl if words aren't loaded", "Game", "listOfWords");
         }
         Grid grid;
         try {
@@ -94,7 +94,7 @@ public class DataLoader {
                 String[] tabStrings = line.split(",");
 
                 if (tabStrings.length != 4) {
-                    throw new InvalidGridFileException(path, lineNumber, line, "Each line in a Grid file must contain content,orientation,startx,starty");
+                    throw new InvalidGridFileException(path, lineNumber, line, "Each line in a GridCtl file must contain content,orientation,startx,starty");
                 }
                 tabStrings[0] = tabStrings[0].toUpperCase();
                 tabStrings[1] = tabStrings[1].toUpperCase();

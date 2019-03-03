@@ -11,13 +11,18 @@ import java.io.IOException;
 import java.nio.file.NotDirectoryException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Observable;
 
-public class Game {
+import static slam.Main.DEBUG;
+
+public class Game extends Observable {
 
     private static Game instance;
     private ArrayList<Grid> listOfGrids;
     private HashMap<String, Word> words;
     private HashMap<Character, ArrayList<Question>> questions;
+
+    private Grid currentGrid;
 
     private Game() {
         this.listOfGrids = new ArrayList<>();
@@ -78,9 +83,25 @@ public class Game {
     }
 
 
-    public Grid getRandomGrid() {
+    public Grid randomChangeCurrentGrid() {
+        if( DEBUG ) {
+            System.out.println("Loading new grid");
+        }
         int index = (int)(Math.random()*this.listOfGrids.size());
-        return this.listOfGrids.get(index);
+        this.currentGrid = this.listOfGrids.get(index);
+        setChanged();
+        notifyObservers();
+        return currentGrid;
+    }
+
+    public void reset() {
+        this.currentGrid.reset();
+        setChanged();
+        notifyObservers();
+    }
+
+    public Grid getCurrentGrid() {
+        return this.currentGrid;
     }
 
     public int loadQuestions(String filePath) throws InvalidQuestionFileException {

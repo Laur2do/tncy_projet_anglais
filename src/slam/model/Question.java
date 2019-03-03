@@ -12,10 +12,6 @@ public class Question {
         this.explanation = explanation;
     }
 
-    public Question(String question, char letter) {
-        this(question, letter, null);
-    }
-
     public String getQuestion() {
         return this.question;
     }

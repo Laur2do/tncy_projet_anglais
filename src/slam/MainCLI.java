@@ -45,7 +45,7 @@ public class MainCLI {
 
             System.out.println("Loaded " + questionsLoaded + " questions");
 
-            Grid grid = game.getRandomGrid();
+            Grid grid = game.randomChangeCurrentGrid();
             System.out.println(grid.shortInfo());
 
             Scanner scanner = new Scanner(System.in);

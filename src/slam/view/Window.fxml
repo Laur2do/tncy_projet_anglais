@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="slam.controller.WindowCtl">
+   <center>
+      <BorderPane fx:id="centerBorderPane">
+         <right>
+            <VBox fx:id="leftPane" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER" />
+         </right>
+      </BorderPane>
+   </center>
+   <bottom>
+      <HBox fx:id="statusBar" prefHeight="20.0" prefWidth="1280.0" BorderPane.alignment="CENTER" />
+   </bottom>
+   <top>
+      <MenuBar fx:id="menuBar" BorderPane.alignment="CENTER">
+        <menus>
+            <Menu mnemonicParsing="false" text="File">
+              <items>
+                <MenuItem mnemonicParsing="false" onAction="#fileLoadGrid" text="Load grid file (.csv)" />
+                  <MenuItem mnemonicParsing="false" onAction="#fileLoadQuestions" text="Load questions file (.csv)" />
+              </items>
+            </Menu>
+          <Menu mnemonicParsing="false" text="Game">
+            <items>
+                  <MenuItem fx:id="newMenuItem" mnemonicParsing="false" onAction="#newGrid" text="New" />
+                  <MenuItem fx:id="restartMenuItem" mnemonicParsing="false" onAction="#reset" text="Restart" />
+              <MenuItem fx:id="exitMenuItem" mnemonicParsing="false" onAction="#exit" text="Exit" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Help">
+            <items>
+              <MenuItem mnemonicParsing="false" onAction="#about" text="About" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+   </top>
+</BorderPane>
