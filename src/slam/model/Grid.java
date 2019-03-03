@@ -1,4 +1,4 @@
-package model;
+package slam.model;
 
 import java.util.ArrayList;
 
@@ -98,6 +98,16 @@ public class Grid {
         int index = (int)(Math.random()*remainingLetters.size());
         char letter = remainingLetters.get(index);
         return Game.getInstance().getRandomQuestionForLetter(letter);
+    }
+
+    public ArrayList<GridWord> getNonRevealedWords() {
+        ArrayList<GridWord> nonRevealedWords = new ArrayList<>();
+        for(GridWord w: this.placedWords) {
+            if(!w.isRevealed()) {
+                nonRevealedWords.add(w);
+            }
+        }
+        return nonRevealedWords;
     }
 
     public GridWord placeWord(Word w, Orientation direction, int firstCharX, int firstCharY) {

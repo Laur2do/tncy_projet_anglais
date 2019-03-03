@@ -1,6 +1,6 @@
-package model.loader;
+package slam.model.loader;
 
-import model.*;
+import slam.model.*;
 
 import java.io.BufferedReader;
 import java.io.FileReader;

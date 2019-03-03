@@ -1,4 +1,4 @@
-package model;
+package slam.model;
 
 import java.util.Arrays;
 
@@ -45,7 +45,6 @@ public class GridWord extends Word {
         return true;
     }
 
-
     public void revealLetter(int index) {
         assert (index > 0 && index < revealedLetters.length);
         this.revealedLetters[index] = true;
@@ -61,6 +60,44 @@ public class GridWord extends Word {
         }
         setChanged();
         notifyObservers();
+    }
+
+    public void reveal() {
+        for (int i = 0; i < this.content.length(); i++) {
+            this.revealedLetters[i] = true;
+        }
+        setChanged();
+        notifyObservers();
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("(");
+        sb.append(this.firstCharX);
+        sb.append(",");
+        sb.append(this.firstCharY);
+        sb.append(") ");
+
+        if(this.orientation == Orientation.VERTICAL) {
+            sb.append("horizontal");
+        } else {
+            sb.append("vertical");
+        }
+        sb.append(":\t");
+
+        if(this.englishDefinition != null) {
+            sb.append("\"");
+            sb.append(this.englishDefinition);
+            sb.append("\"");
+        }
+        if(this.frenchDefinition != null) {
+            sb.append(" or, in french: \"");
+            sb.append(this.frenchDefinition);
+            sb.append("\"");
+        }
+
+        return sb.toString();
     }
 
 }

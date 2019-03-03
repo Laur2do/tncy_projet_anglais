@@ -1,4 +1,4 @@
-package model.loader;
+package slam.model.loader;
 
 import java.text.ParseException;
 

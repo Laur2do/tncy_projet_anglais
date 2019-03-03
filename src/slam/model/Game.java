@@ -1,9 +1,9 @@
-package model;
+package slam.model;
 
-import model.loader.DataLoader;
-import model.loader.InvalidGridFileException;
-import model.loader.InvalidQuestionFileException;
-import model.loader.InvalidWordFileException;
+import slam.model.loader.DataLoader;
+import slam.model.loader.InvalidGridFileException;
+import slam.model.loader.InvalidQuestionFileException;
+import slam.model.loader.InvalidWordFileException;
 
 import java.io.File;
 import java.io.FileNotFoundException;

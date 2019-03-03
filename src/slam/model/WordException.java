@@ -1,4 +1,4 @@
-package model;
+package slam.model;
 
 public class WordException extends Exception {
 

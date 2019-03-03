@@ -1,14 +1,17 @@
-import model.*;
-import model.loader.InvalidGridFileException;
-import model.loader.InvalidQuestionFileException;
-import model.loader.InvalidWordFileException;
+package slam;
+
+import slam.model.*;
+import slam.model.loader.InvalidGridFileException;
+import slam.model.loader.InvalidQuestionFileException;
+import slam.model.loader.InvalidWordFileException;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
 
-public class Main {
+public class MainCLI {
 
     /*@Override
     public void start(Stage primaryStage) throws Exception {
@@ -44,10 +47,10 @@ public class Main {
 
             Grid grid = game.getRandomGrid();
             System.out.println(grid.shortInfo());
-            System.out.println(grid.toString());
 
             Scanner scanner = new Scanner(System.in);
             while (!grid.isRevealed()) {
+                System.out.println(grid);
                 Question q = grid.getRandomQuestionForRemainingLetters();
 
                 System.out.print("Here is the question: \t" + q + "\n> ");
@@ -74,7 +77,34 @@ public class Main {
 
                 char c = Character.toUpperCase(answer.charAt(0));
                 grid.revealLetter(c);
-                System.out.println(grid.toString());
+                System.out.println(grid);
+
+                // We can now try to reveal a word
+                ArrayList<GridWord> remainingWords = grid.getNonRevealedWords();
+                System.out.println("You can try to guess a complete word. Please choose among:");
+                for(int i = 0; i < remainingWords.size(); i++) {
+                    System.out.println("\t"+i+ ": "+remainingWords.get(i));
+                }
+                System.out.print("\n> ");
+                int wordIndex = scanner.nextInt();
+                while (wordIndex < 0 || wordIndex >= remainingWords.size()) {
+                    System.err.println("Please enter a correct word number");
+                    System.out.println("You can try to guess a complete word. Please choose among:");
+                    for(int i = 0; i < remainingWords.size(); i++) {
+                        System.out.println("\t"+i+ ": "+remainingWords.get(i));
+                    }
+                    wordIndex = scanner.nextInt();
+                }
+                GridWord selectedWordToGuess = remainingWords.get(wordIndex);
+                System.out.println("What's your guess for this word?\n\t"+selectedWordToGuess);
+                System.out.print("\n> ");
+                String wordAnswer = scanner.next();
+                if( wordAnswer.toUpperCase().equals(selectedWordToGuess.getContent())) {
+                    System.out.println("This is correct!");
+                    selectedWordToGuess.reveal();
+                }else {
+                    System.out.println("Wrong guess, try again next time!");
+                }
             }
 
             System.out.println("Congratulations!");

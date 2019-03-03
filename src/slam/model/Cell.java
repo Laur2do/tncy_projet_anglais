@@ -1,4 +1,4 @@
-package model;
+package slam.model;
 
 import java.util.Observable;
 import java.util.Observer;
