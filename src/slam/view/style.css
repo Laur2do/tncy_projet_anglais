@@ -19,7 +19,7 @@
     -fx-text-fill: #B22D24;
 }
 
-.error-critical {
+.critical-error {
     -fx-text-fill: #F70000;
     -fx-font-weight: bold;
 }

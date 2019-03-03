@@ -64,7 +64,7 @@ public class QuestionCtl implements Observer {
         messageLabel.getStyleClass().add("critical-error");
     }
 
-    private void displayWrongAnswerPopup() {
+    private void displayWrongAnswerMessage() {
         if (DEBUG) {
             System.out.println("Wrong answer!");
             System.out.println("Correct answer was: " + this.currentQuestion.getLetter());
@@ -83,7 +83,7 @@ public class QuestionCtl implements Observer {
         messageLabel.getStyleClass().add("error");
     }
 
-    private void displayGoodAnswerPopup() {
+    private void displayGoodAnswerMessage() {
         if (DEBUG) {
             System.out.println("Correct!");
             if (this.currentQuestion.getExplanation() != null) {
@@ -112,10 +112,12 @@ public class QuestionCtl implements Observer {
         }
 
         if (!this.currentQuestion.validate(this.answer.getText())) {
-            displayWrongAnswerPopup();
+            displayWrongAnswerMessage();
+            this.answer.setText("");
+            this.setNewQuestion();
             return;
         } else {
-            displayGoodAnswerPopup();
+            displayGoodAnswerMessage();
         }
 
         char c = Character.toUpperCase(this.answer.getText().charAt(0));
@@ -127,7 +129,6 @@ public class QuestionCtl implements Observer {
         this.gridCtl.updateGridPane();
 
         this.answer.setText("");
-
         this.setNewQuestion();
     }
 
