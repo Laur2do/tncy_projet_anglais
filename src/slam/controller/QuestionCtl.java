@@ -46,11 +46,16 @@ public class QuestionCtl implements Observer {
         if (this.currentQuestion != null) {
             this.question.setText(this.currentQuestion.getQuestion());
             this.questionPane.setVisible(true);
+            this.answer.setVisible(true);
         } else {
             this.answer.setText("");
             this.messageLabel.setText("");
             this.questionPane.setVisible(false);
         }
+    }
+
+    public void cleanMessage() {
+        messageLabel.setText("");
     }
 
     public void displayError(String s) {
@@ -83,6 +88,7 @@ public class QuestionCtl implements Observer {
         messageLabel.getStyleClass().add("error");
     }
 
+
     private void displayGoodAnswerMessage() {
         if (DEBUG) {
             System.out.println("Correct!");
@@ -95,15 +101,17 @@ public class QuestionCtl implements Observer {
         if (this.currentQuestion.getExplanation() != null) {
             contentText += ", because " + this.currentQuestion.getExplanation();
         }
-        messageLabel.setText(contentText + ".");
+        messageLabel.setText(contentText + ". Click on a word to guess it!");
         messageLabel.getStyleClass().clear();
         messageLabel.getStyleClass().add("success");
+
+        this.gridCtl.setEnableGuess(true, this);
     }
 
 
     private void OKPressed(ActionEvent event) {
-        if( DEBUG) {
-            System.out.println(" > "+this.answer.getText());
+        if (DEBUG) {
+            System.out.println(" > " + this.answer.getText());
         }
 
         if (!Game.validLetter(this.answer.getText())) {
@@ -120,16 +128,17 @@ public class QuestionCtl implements Observer {
             displayGoodAnswerMessage();
         }
 
+        // The answer is good, we reveal the letter
         char c = Character.toUpperCase(this.answer.getText().charAt(0));
         Game.getInstance().getCurrentGrid().revealLetter(c);
-        if( DEBUG) {
+        if (DEBUG) {
             System.out.println(Game.getInstance().getCurrentGrid());
         }
-
         this.gridCtl.updateGridPane();
 
         this.answer.setText("");
-        this.setNewQuestion();
+        this.answer.setVisible(false);
+        this.question.setText("");
     }
 
     public void update(Observable obs, Object obj) {

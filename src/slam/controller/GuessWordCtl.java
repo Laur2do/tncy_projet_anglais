@@ -11,53 +11,45 @@ import static slam.Main.DEBUG;
 
 public class GuessWordCtl {
 
-	private GridWord gridWord;
+    private GridWord gridWord;
 
-	@FXML
-	private Label definition;
+    @FXML
+    private Label definition;
 
-	@FXML
-	private Label word;
+    @FXML
+    private Label word;
 
-	@FXML
-	private TextField answer;
+    @FXML
+    private TextField answer;
 
-	public GuessWordCtl() {
+    public GuessWordCtl() {}
 
-	}
+    public void setGridWord(GridWord gw) {
+        this.gridWord = gw;
+        StringBuilder sb = new StringBuilder();
 
-	public void setGridWord(GridWord gw) {
-		this.gridWord = gw;
-		StringBuilder sb = new StringBuilder();
+        boolean[] revealedLetters = gw.getRevealedLetters();
+        for (int i = 0; i < gw.getLength(); i++) {
+            if (revealedLetters[i]) {
+                sb.append(gw.getLetter(i));
+            } else {
+                sb.append(Cell.NOT_REVEALED_LETTER_CHAR);
+            }
+        }
+        sb.append("\n");
+        word.setText(sb.toString());
 
-		boolean[] revealedLetters = gw.getRevealedLetters();
-		for (int i = 0; i < gw.getLength(); i++) {
-			if (revealedLetters[i]) {
-				sb.append(gw.getLetter(i));
-			} else {
-				sb.append(Cell.NOT_REVEALED_LETTER_CHAR);
-			}
-		}
-		sb.append("\n");
-		word.setText(sb.toString());
+        definition.setText(gw.getDefinitions());
+    }
 
-		definition.setText(gw.getDefinitions());
-	}
-
-	public void validate() {
-		if (DEBUG) {
-			System.out.println("> " + this.answer.getText());
-		}
-		if (this.gridWord.getContent().equals(answer.getText().toUpperCase())) {
-			if (DEBUG) {
-				System.out.println("Correct!");
-			}
-			this.gridWord.reveal();
-		} else {
-			if (DEBUG) {
-				System.out.println("Incorrect!");
-			}
-		}
-		((Stage)word.getScene().getWindow()).close();
-	}
+    public void validate() {
+        if (this.gridWord.getContent().equals(answer.getText().toUpperCase())) {
+            if (DEBUG) {
+                System.out.println("> " + this.answer.getText()+"\nCorrect!");
+            }
+            this.gridWord.reveal();
+        } else if (DEBUG) {
+            System.out.println("> " + this.answer.getText()+"\nIncorrect!");
+        }
+    }
 }
