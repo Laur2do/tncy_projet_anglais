@@ -108,7 +108,6 @@ public class Game extends Observable {
         return DataLoader.loadQuestionFile(filePath);
     }
 
-
     public Question getRandomQuestionForLetter(char letter) {
         ArrayList<Question> letterQuestions = questions.get(letter);
         if( letterQuestions.size() == 0 ) {

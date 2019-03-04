@@ -5,6 +5,16 @@
     -fx-font-weight: bold;
     -fx-pref-width: 30px;
     -fx-text-fill: white;
+    -fx-font-size: 20px;
+}
+.cell-hover {
+    -fx-border-color: #dedede;
+    -fx-background-color: #0951C5;
+    -fx-alignment: center;
+    -fx-font-weight: bold;
+    -fx-pref-width: 30px;
+    -fx-text-fill: yellow;
+    -fx-font-size: 20px;
 }
 
 .grid {

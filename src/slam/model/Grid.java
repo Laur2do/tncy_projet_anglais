@@ -123,6 +123,10 @@ public class Grid {
         return nonRevealedWords;
     }
 
+    public ArrayList<GridWord> getPlacedWords() {
+        return this.placedWords;
+    }
+
     public GridWord placeWord(Word w, Orientation direction, int firstCharX, int firstCharY) {
         int wordLength = w.getLength();
         if (direction == Orientation.VERTICAL && firstCharY + wordLength > grid.length ||

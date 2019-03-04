@@ -78,6 +78,23 @@ public class GridWord extends Word {
         notifyObservers();
     }
 
+    public String getDefinitions() {
+        StringBuilder sb = new StringBuilder();
+        if(this.englishDefinition != null) {
+            sb.append(this.englishDefinition);
+        }
+        if(this.frenchDefinition != null) {
+            if(this.englishDefinition != null) {
+                sb.append(" or, in french: '");
+            }else {
+                sb.append('\'');
+            }
+            sb.append(this.frenchDefinition);
+            sb.append('\'');
+        }
+        return sb.toString();
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -94,16 +111,7 @@ public class GridWord extends Word {
         }
         sb.append(":\t");
 
-        if(this.englishDefinition != null) {
-            sb.append("\"");
-            sb.append(this.englishDefinition);
-            sb.append("\"");
-        }
-        if(this.frenchDefinition != null) {
-            sb.append(" or, in french: \"");
-            sb.append(this.frenchDefinition);
-            sb.append("\"");
-        }
+        sb.append(getDefinitions());
 
         return sb.toString();
     }
