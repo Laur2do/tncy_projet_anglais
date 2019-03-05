@@ -12,15 +12,10 @@
             <Font name="System Bold" size="25.0" />
          </font>
       </Label>
-      <TextField fx:id="answer" onAction="#validate">
+      <TextField fx:id="answer" alignment="CENTER" onAction="#validate" prefColumnCount="26" styleClass="answer-input">
          <font>
             <Font size="22.0" />
          </font></TextField>
-      <Label fx:id="word" focusTraversable="false" textAlignment="CENTER">
-         <font>
-            <Font size="22.0" />
-         </font>
-      </Label>
       <Label fx:id="definition" focusTraversable="false" textAlignment="CENTER" wrapText="true">
          <font>
             <Font name="System Bold" size="20.0" />

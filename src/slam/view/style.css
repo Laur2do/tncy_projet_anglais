@@ -1,5 +1,5 @@
 .cell {
-    -fx-border-color: #dedede;
+    -fx-background-radius: 3px;
     -fx-background-color: #3D6CF7;
     -fx-alignment: center;
     -fx-font-weight: bold;
@@ -19,6 +19,21 @@
 
 .grid {
     -fx-background-color: #F7F1C0;
+}
+
+.answer-input {
+    -fx-background-radius: 3px;
+    -fx-background-color: transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-border-color: #3D6CF7;
+    -fx-text-fill: #3D6CF7;
+}
+
+.answer-input:focused {
+    -fx-background-radius: 3px;
+    -fx-border-width: 0 0 1 0;
+    -fx-border-color: #3D6CF7;
+    -fx-text-fill: #3D6CF7;
 }
 
 .success {
