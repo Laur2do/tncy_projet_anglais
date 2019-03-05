@@ -35,6 +35,17 @@ public class Cell implements Observer {
     public void update(Observable o, Object arg) {
         if (o == word) {
             revealed = word.getRevealedLetters()[wordIndex];
+        } else {
+            if (arg != null) {
+                int index = (Integer) arg;
+                GridWord gridWord = (GridWord) o;
+                if (word.getLetter(wordIndex) == gridWord.getLetter(index)) {
+                    if (index >= 0 && index < gridWord.getLength()) {
+                        revealed = revealed || gridWord.getRevealedLetters()[index];
+                        word.getRevealedLetters()[wordIndex] = revealed;
+                    }
+                }
+            }
         }
     }
 }

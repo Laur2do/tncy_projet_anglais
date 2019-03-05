@@ -137,6 +137,7 @@ public class Grid {
         for (int k = 0; k < wordLength; ++k) {
             if (direction == Orientation.VERTICAL) {
                 if (grid[firstCharX][firstCharY + k] != null) {
+                    gridWord.addObserver(grid[firstCharX][firstCharY + k]);
                     if (grid[firstCharX][firstCharY + k].getLetter() == w.getLetter(k)) {
                         // The letter is already correct
                         continue;
@@ -147,6 +148,7 @@ public class Grid {
                 grid[firstCharX][firstCharY + k] = new Cell(gridWord, k);
             } else {
                 if (grid[firstCharX + k][firstCharY] != null) {
+                    gridWord.addObserver(grid[firstCharX + k][firstCharY]);
                     if (grid[firstCharX + k][firstCharY].getLetter() == w.getLetter(k)) {
                         // The letter is already correct
                         continue;

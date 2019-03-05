@@ -50,7 +50,7 @@ public class GridCtl implements Observer {
         // Load the popup
         try {
             FXMLLoader popupFXML = new FXMLLoader();
-            popupFXML.setLocation(getClass().getResource("../view/GuessWordPopup.fxml"));
+            popupFXML.setLocation(getClass().getResource("../view/GuessWord.fxml"));
             VBox guessWordDialogContent = popupFXML.load();
 
             GuessWordCtl ctl = popupFXML.getController();
@@ -68,7 +68,7 @@ public class GridCtl implements Observer {
                 centerBorderPane.setBottom(this.questionPane);
                 l.execute();
                 this.setEnableGuess(false, this.questionCtl);
-                if( this.questionCtl != null) {
+                if (this.questionCtl != null) {
                     this.questionCtl.cleanMessage();
                     this.questionCtl.setNewQuestion();
                 }
@@ -111,8 +111,9 @@ public class GridCtl implements Observer {
                     cellLabel = new Label(String.valueOf(letter));
                     this.gridPane.add(cellLabel, x, y);
                     cellLabel.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
-                        if (this.canGuessWord) {
+                        if (this.canGuessWord && !gw.isRevealed()) {
                             showGuessWord(gw, () -> {
+                                System.out.println(currentGrid);
                                 for (Label label : cellLabels) {
                                     label.getStyleClass().remove("cell-focus");
                                 }
@@ -125,6 +126,10 @@ public class GridCtl implements Observer {
                 } else {
                     // If it already exists, ignore the click as we don't know which word the user wants to select
                     cellLabel.addEventFilter(MouseEvent.MOUSE_CLICKED, MouseEvent::consume);
+                    if (letter != Cell.NOT_REVEALED_LETTER_CHAR && cellLabel.getText().charAt(0) == Cell.NOT_REVEALED_LETTER_CHAR) {
+                        // There is a conflict. If the letter is revealed in this world, we assume it should be revealed
+                        cellLabel.setText(String.valueOf(letter));
+                    }
                 }
                 cellLabels[index] = cellLabel;
 

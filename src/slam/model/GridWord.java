@@ -45,37 +45,30 @@ public class GridWord extends Word {
         return true;
     }
 
-    public void revealLetter(int index) {
-        assert (index > 0 && index < revealedLetters.length);
-        this.revealedLetters[index] = true;
-        setChanged();
-        notifyObservers();
-    }
-
     public void revealLetter(char letter) {
         for (int i = 0; i < this.content.length(); i++) {
             if (this.content.charAt(i) == Character.toUpperCase(letter)) {
                 this.revealedLetters[i] = true;
+                setChanged();
+                notifyObservers(i);
             }
         }
-        setChanged();
-        notifyObservers();
     }
 
     public void reveal() {
         for (int i = 0; i < this.content.length(); i++) {
             this.revealedLetters[i] = true;
+            setChanged();
+            notifyObservers(i);
         }
-        setChanged();
-        notifyObservers();
     }
 
     public void reset() {
         for (int i = 0; i < this.content.length(); i++) {
             this.revealedLetters[i] = false;
+            setChanged();
+            notifyObservers(i);
         }
-        setChanged();
-        notifyObservers();
     }
 
     public String getDefinitions() {

@@ -1,15 +1,16 @@
 package slam.controller;
 
 import javafx.event.ActionEvent;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
 import javafx.scene.layout.VBox;
 import slam.model.Game;
 import slam.model.Question;
 
 import java.util.Observable;
 import java.util.Observer;
+import java.util.function.UnaryOperator;
 
 import static slam.Main.DEBUG;
 
@@ -33,11 +34,20 @@ public class QuestionCtl implements Observer {
         this.questionPane = questionPane;
         this.question = (Label) this.questionPane.lookup("#question");
         this.answer = (TextField) this.questionPane.lookup("#answer");
-        Button okButton = (Button) this.questionPane.lookup("#okButton");
-
         this.messageLabel = (Label) this.questionPane.lookup("#message");
 
-        okButton.setOnAction(this::OKPressed);
+        UnaryOperator<TextFormatter.Change> modifyChange = c -> {
+            if (c.isContentChange()) {
+                if (c.getControlNewText().length() > 1) {
+                    // Trim the text to the first char
+                    c.setText(c.getControlNewText().substring(0, 1));
+                    // Set the range of the change from 0 to all the new added text
+                    c.setRange(0, c.getControlText().length());
+                }
+            }
+            return c;
+        };
+        this.answer.setTextFormatter(new TextFormatter(modifyChange));
         this.answer.setOnAction(this::OKPressed);
     }
 
@@ -47,6 +57,9 @@ public class QuestionCtl implements Observer {
             this.question.setText(this.currentQuestion.getQuestion());
             this.questionPane.setVisible(true);
             this.answer.setVisible(true);
+            if (DEBUG) {
+                System.out.println(this.currentQuestion.getQuestion());
+            }
         } else {
             this.answer.setText("");
             this.messageLabel.setText("");
@@ -95,6 +108,7 @@ public class QuestionCtl implements Observer {
             if (this.currentQuestion.getExplanation() != null) {
                 System.out.println("\tBecause " + this.currentQuestion.getExplanation());
             }
+            System.out.println("You can now guess a word!");
         }
 
         String contentText = "'" + this.currentQuestion.getLetter() + "' is correct'";
