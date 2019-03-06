@@ -29,6 +29,7 @@
             </Menu>
           <Menu mnemonicParsing="false" text="Game">
             <items>
+                  <MenuItem mnemonicParsing="false" onAction="#newRandomGrid" text="New Random Grid" />
                   <MenuItem fx:id="newMenuItem" mnemonicParsing="false" onAction="#newGrid" text="New" />
                   <MenuItem fx:id="restartMenuItem" mnemonicParsing="false" onAction="#reset" text="Restart" />
               <MenuItem fx:id="exitMenuItem" mnemonicParsing="false" onAction="#exit" text="Exit" />

@@ -23,6 +23,12 @@ public class Main extends Application {
     public final static boolean DEBUG = true;
     public final static String TITLE = "Grand Chelem";
 
+    public static void printdebugln(Object obj) {
+        if( DEBUG ) {
+            System.out.println(obj);
+        }
+    }
+
     private void loadGameData() {
         Game game = Game.getInstance();
         try {

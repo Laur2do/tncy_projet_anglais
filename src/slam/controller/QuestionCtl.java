@@ -12,7 +12,7 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.function.UnaryOperator;
 
-import static slam.Main.DEBUG;
+import static slam.Main.printdebugln;
 
 public class QuestionCtl implements Observer {
 
@@ -57,9 +57,7 @@ public class QuestionCtl implements Observer {
             this.question.setText(this.currentQuestion.getQuestion());
             this.questionPane.setVisible(true);
             this.answer.setVisible(true);
-            if (DEBUG) {
-                System.out.println(this.currentQuestion.getQuestion());
-            }
+            printdebugln(this.currentQuestion.getQuestion());
         } else {
             this.answer.setText("");
             this.messageLabel.setText("");
@@ -72,10 +70,8 @@ public class QuestionCtl implements Observer {
     }
 
     public void displayError(String s) {
-        if (DEBUG) {
-            System.err.println(s);
-            System.out.print("Here is the question: \t" + this.currentQuestion);
-        }
+        printdebugln(s);
+        printdebugln("Here is the question: \t" + this.currentQuestion);
 
         messageLabel.setText(s);
         messageLabel.getStyleClass().clear();
@@ -83,13 +79,9 @@ public class QuestionCtl implements Observer {
     }
 
     private void displayWrongAnswerMessage() {
-        if (DEBUG) {
-            System.out.println("Wrong answer!");
-            System.out.println("Correct answer was: " + this.currentQuestion.getLetter());
-
-            if (this.currentQuestion.getExplanation() != null) {
-                System.out.println("\tbecause " + this.currentQuestion.getExplanation());
-            }
+        printdebugln("Wrong! Correct answer was: " + this.currentQuestion.getLetter());
+        if (this.currentQuestion.getExplanation() != null) {
+            printdebugln("\tbecause " + this.currentQuestion.getExplanation());
         }
 
         String contentText = "Wrong! The correct answer was '" + this.currentQuestion.getLetter() + "'";
@@ -103,13 +95,11 @@ public class QuestionCtl implements Observer {
 
 
     private void displayGoodAnswerMessage() {
-        if (DEBUG) {
-            System.out.println("Correct!");
-            if (this.currentQuestion.getExplanation() != null) {
-                System.out.println("\tBecause " + this.currentQuestion.getExplanation());
-            }
-            System.out.println("You can now guess a word!");
+        printdebugln("Correct!");
+        if (this.currentQuestion.getExplanation() != null) {
+            printdebugln("\tBecause " + this.currentQuestion.getExplanation());
         }
+        printdebugln("You can now guess a word!");
 
         String contentText = "'" + this.currentQuestion.getLetter() + "' is correct'";
         if (this.currentQuestion.getExplanation() != null) {
@@ -124,9 +114,7 @@ public class QuestionCtl implements Observer {
 
 
     private void OKPressed(ActionEvent event) {
-        if (DEBUG) {
-            System.out.println(" > " + this.answer.getText());
-        }
+        printdebugln(" > " + this.answer.getText());
 
         if (!Game.validLetter(this.answer.getText())) {
             displayError("Please enter a valid letter");
@@ -145,9 +133,7 @@ public class QuestionCtl implements Observer {
         // The answer is good, we reveal the letter
         char c = Character.toUpperCase(this.answer.getText().charAt(0));
         Game.getInstance().getCurrentGrid().revealLetter(c);
-        if (DEBUG) {
-            System.out.println(Game.getInstance().getCurrentGrid());
-        }
+        printdebugln(Game.getInstance().getCurrentGrid());
         this.gridCtl.updateGridPane();
 
         this.answer.setText("");

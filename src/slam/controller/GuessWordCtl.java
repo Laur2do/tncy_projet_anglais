@@ -8,7 +8,7 @@ import slam.model.GridWord;
 
 import java.util.function.UnaryOperator;
 
-import static slam.Main.DEBUG;
+import static slam.Main.printdebugln;
 
 public class GuessWordCtl {
 
@@ -50,12 +50,10 @@ public class GuessWordCtl {
 
     public void validate() {
         if (this.gridWord.getContent().equals(this.answer.getText().toUpperCase())) {
-            if (DEBUG) {
-                System.out.println("> " + this.answer.getText() + "\nCorrect!");
-            }
+            printdebugln("> " + this.answer.getText() + "\nCorrect!");
             this.gridWord.reveal();
-        } else if (DEBUG) {
-            System.out.println("> " + this.answer.getText() + "\nIncorrect!");
+        } else {
+            printdebugln("> " + this.answer.getText() + "\nIncorrect!");
         }
     }
 }

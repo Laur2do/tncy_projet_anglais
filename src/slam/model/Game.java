@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Observable;
 
-import static slam.Main.DEBUG;
+import static slam.Main.printdebugln;
 
 public class Game extends Observable {
 
@@ -28,7 +28,7 @@ public class Game extends Observable {
         this.listOfGrids = new ArrayList<>();
         this.words = new HashMap<>();
         this.questions = new HashMap<>();
-        for(char letter = 'A'; letter <= 'Z'; letter++) {
+        for (char letter = 'A'; letter <= 'Z'; letter++) {
             this.questions.put(letter, new ArrayList<>());
         }
 
@@ -50,6 +50,11 @@ public class Game extends Observable {
     }
 
     public void addWord(Word word) {
+        if( this.words.containsKey(word.getContent())) {
+            System.err.println("Warning: adding word entry which is already present. Overriding previous entry.");
+            System.err.println("\t new: "+word);
+            System.err.println("\t old: "+this.words.get(word.getContent()));
+        }
         this.words.put(word.getContent(), word);
     }
 
@@ -72,7 +77,7 @@ public class Game extends Observable {
         }
         File[] gridFiles = folder.listFiles((File directory, String fileName) -> fileName.endsWith(".csv"));
         if (gridFiles == null) {
-            throw new FileNotFoundException("Cant find any CSV files in "+folderPath);
+            throw new FileNotFoundException("Cant find any CSV files in " + folderPath);
         }
         int gridsLoaded = 0;
         for (File gridFile : gridFiles) {
@@ -84,11 +89,18 @@ public class Game extends Observable {
 
 
     public Grid randomChangeCurrentGrid() {
-        if( DEBUG ) {
-            System.out.println("Loading new grid");
-        }
-        int index = (int)(Math.random()*this.listOfGrids.size());
+        printdebugln("Loading new grid");
+        int index = (int) (Math.random() * this.listOfGrids.size());
         this.currentGrid = this.listOfGrids.get(index);
+        setChanged();
+        notifyObservers();
+        return currentGrid;
+    }
+
+    public Grid generateRandomCurrentGrid() {
+        printdebugln("Computing new grid");
+        this.currentGrid = new Grid();
+        this.currentGrid.compute();
         setChanged();
         notifyObservers();
         return currentGrid;
@@ -110,10 +122,10 @@ public class Game extends Observable {
 
     public Question getRandomQuestionForLetter(char letter) {
         ArrayList<Question> letterQuestions = questions.get(letter);
-        if( letterQuestions.size() == 0 ) {
+        if (letterQuestions.size() == 0) {
             return null;
         }
-        int index = (int)(Math.random()*letterQuestions.size());
+        int index = (int) (Math.random() * letterQuestions.size());
         return letterQuestions.get(index);
     }
 
@@ -121,7 +133,7 @@ public class Game extends Observable {
         return s.length() == 1 && validLetter(s.charAt(0));
     }
 
-    public static boolean validLetter(char  c) {
+    public static boolean validLetter(char c) {
         c = Character.toUpperCase(c);
         return c >= 'A' && c <= 'Z';
     }

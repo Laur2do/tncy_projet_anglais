@@ -8,7 +8,7 @@ import javafx.stage.Window;
 import slam.Main;
 import slam.model.Game;
 
-import static slam.Main.DEBUG;
+import static slam.Main.printdebugln;
 
 
 public class WindowCtl {
@@ -29,24 +29,22 @@ public class WindowCtl {
 
     public void newGrid() {
         Game.getInstance().randomChangeCurrentGrid();
-        if (DEBUG) {
-            System.out.println("Loading new grid");
-            System.out.println(Game.getInstance().getCurrentGrid());
-        }
+        printdebugln(Game.getInstance().getCurrentGrid());
+    }
+
+    public void newRandomGrid() {
+        Game.getInstance().generateRandomCurrentGrid();
+        printdebugln(Game.getInstance().getCurrentGrid());
     }
 
     public void reset() {
         Game.getInstance().reset();
-        if (DEBUG) {
-            System.out.println("Reseting current grid");
-            System.out.println(Game.getInstance().getCurrentGrid());
-        }
+        printdebugln("Reseting current grid");
+        printdebugln(Game.getInstance().getCurrentGrid());
     }
 
     public void exit() {
-        if (DEBUG) {
-            System.out.println("Exiting");
-        }
+        printdebugln("Exiting");
         Stage stage = (Stage) root.getScene().getWindow();
         stage.close();
 
@@ -55,9 +53,7 @@ public class WindowCtl {
 
     public void about() {
         String about = "This is a Java implementation of the TV French game Slam, made for a TELECOM Nancy 2A English project";
-        if (DEBUG) {
-            System.out.println(about);
-        }
+        printdebugln(about);
         Dialog d = new Dialog();
         Window window = d.getDialogPane().getScene().getWindow();
         window.setOnCloseRequest(event -> window.hide());

@@ -1,5 +1,7 @@
 package slam.model;
 
+import javafx.util.Pair;
+
 import java.util.Observable;
 
 public class Word extends Observable {
@@ -60,6 +62,25 @@ public class Word extends Observable {
             e.printStackTrace();
             System.exit(-1);
         }
+    }
+
+    /**
+     *
+     * @param other The other word to find common letter in
+     * @param start The index in this word to start looking for common letter
+     * @return Pair of integer representing the indexes in : 1) this, 2) other
+     */
+    public Pair<Integer, Integer> indexOfFirstCommonLetter(Word other, int start) {
+        if(start >= other.getLength()) {
+            return null;
+        }
+        for (int i = start ; i < other.getLength() ; i++) {
+            int idx = this.content.indexOf(other.getLetter(i));
+            if( idx != -1) {
+                return new Pair<>(idx, i);
+            }
+        }
+        return null;
     }
 
 

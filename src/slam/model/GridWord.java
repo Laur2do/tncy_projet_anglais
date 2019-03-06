@@ -90,23 +90,7 @@ public class GridWord extends Word {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("(");
-        sb.append(this.firstCharX);
-        sb.append(",");
-        sb.append(this.firstCharY);
-        sb.append(") ");
-
-        if(this.orientation == Orientation.VERTICAL) {
-            sb.append("horizontal");
-        } else {
-            sb.append("vertical");
-        }
-        sb.append(":\t");
-
-        sb.append(getDefinitions());
-
-        return sb.toString();
+        return this.content;
     }
 
 }

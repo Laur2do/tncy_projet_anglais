@@ -22,6 +22,17 @@ public class Cell implements Observer {
         w.addObserver(this);
     }
 
+    public Cell(Cell c) {
+        this.word = c.word;
+        this.wordIndex = c.wordIndex;
+        this.revealed = c.revealed;
+        c.word.addObserver(this);
+    }
+
+    public GridWord getWord() {
+        return this.word;
+    }
+
     @Override
     public String toString() {
         if (revealed) {
