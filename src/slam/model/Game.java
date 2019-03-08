@@ -50,10 +50,10 @@ public class Game extends Observable {
     }
 
     public void addWord(Word word) {
-        if( this.words.containsKey(word.getContent())) {
+        if (this.words.containsKey(word.getContent())) {
             System.err.println("Warning: adding word entry which is already present. Overriding previous entry.");
-            System.err.println("\t new: "+word);
-            System.err.println("\t old: "+this.words.get(word.getContent()));
+            System.err.println("\t new: " + word.getDescription());
+            System.err.println("\t old: " + this.words.get(word.getContent()));
         }
         this.words.put(word.getContent(), word);
     }
@@ -97,13 +97,12 @@ public class Game extends Observable {
         return currentGrid;
     }
 
-    public Grid generateRandomCurrentGrid() {
+    public void generateRandomCurrentGrid() {
         printdebugln("Computing new grid");
         this.currentGrid = new Grid();
         this.currentGrid.compute();
         setChanged();
         notifyObservers();
-        return currentGrid;
     }
 
     public void reset() {

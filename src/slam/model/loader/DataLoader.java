@@ -113,7 +113,7 @@ public class DataLoader {
                     if (startX < 0 || startY < 0) {
                         throw new InvalidGridFileException(path, lineNumber, line, "Third & fourth items must be positive integers.");
                     }
-                    if (startX >= grid.getWidth() || startY >= grid.getHeight()) {
+                    if (startX >= grid.w() || startY >= grid.h()) {
                         throw new InvalidGridFileException(path, lineNumber, line, "Third & fourth items must be lower than the grid's dimensions");
                     }
                     GridWord word = grid.placeWord(gameWords.get(tabStrings[0]), orientation, startX, startY);

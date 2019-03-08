@@ -13,16 +13,7 @@ import java.util.Scanner;
 
 public class MainCLI {
 
-    /*@Override
-    public void start(Stage primaryStage) throws Exception {
-        /*Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
-        primaryStage.setTitle("Hello World");
-        primaryStage.setScene(new Scene(root, 300, 275));
-        primaryStage.show();
-    }*/
-
-    public final static boolean DEBUG = false;
-
+    private final static boolean DEBUG = false;
 
     public static void main(String[] args) {
         // launch(args);
@@ -33,7 +24,7 @@ public class MainCLI {
             if (DEBUG) {
                 HashMap<String, Word> words = game.getWords();
                 for (Word w : words.values()) {
-                    System.out.println(w.toString());
+                    System.out.println(w.getDescription());
                 }
             }
 

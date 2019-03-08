@@ -22,7 +22,7 @@ public class Word extends Observable {
         init(content, englishDefinition, frenchDefinition);
     }
 
-    public static boolean validWord(String s) {
+    private static boolean validWord(String s) {
         for(char c : s.toUpperCase().toCharArray()) {
             if( ! Game.validLetter(c) ){
                 return false;
@@ -96,18 +96,13 @@ public class Word extends Observable {
         return content.charAt(i);
     }
 
-
-    public String getEnglishDefinition() {
-        return englishDefinition;
-    }
-
-    public String getFrenchDefinition() {
-        return frenchDefinition;
+    public String getDescription() {
+        return (this.content + ", " + this.length + ", " + this.englishDefinition + ", " + this.frenchDefinition);
     }
 
     @Override
     public String toString() {
-        return (this.content + ", " + this.length + ", " + this.englishDefinition + ", " + this.frenchDefinition);
+        return this.content;
     }
 
 }

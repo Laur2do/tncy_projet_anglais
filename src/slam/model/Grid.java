@@ -2,9 +2,7 @@ package slam.model;
 
 import javafx.util.Pair;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
+import java.util.*;
 
 import static slam.Main.printdebugln;
 
@@ -20,7 +18,7 @@ public class Grid {
      * Algorithm will retry to place words randomly until this is matched.
      * TODO: adjust it according to the available words
      */
-    private static final int MIN_WORDS_COUNT = 3;
+    private static final int MIN_WORDS_COUNT = 4;
 
     private static final int MAX_GRID_WIDTH = 50;
     private static final int MAX_GRID_HEIGHT = 50;
@@ -29,7 +27,7 @@ public class Grid {
 
     private HashMap<Word, GridWord> placedWords;
 
-    private ArrayList<Word> wordsToPlace;
+    private HashSet<Word> wordsToPlace;
 
     public Grid() {
         this(MAX_GRID_WIDTH, MAX_GRID_HEIGHT);
@@ -38,7 +36,7 @@ public class Grid {
     public Grid(int width, int height) {
         grid = new Cell[width][height];
         placedWords = new HashMap<>();
-        wordsToPlace = new ArrayList<>();
+        wordsToPlace = new HashSet<>();
     }
 
     @Override
@@ -46,16 +44,16 @@ public class Grid {
         return gridToString(false);
     }
 
-    public int getWidth() {
+    public int w() {
         return grid[0].length;
     }
 
-    public int getHeight() {
+    public int h() {
         return grid.length;
     }
 
     public String shortInfo() {
-        return "GridCtl " + grid[0].length + "x" + grid.length + ", " + placedWords.size() + " words";
+        return "GridCtl " + w() + "x" + h() + ", " + placedWords.size() + " words";
     }
 
     public void reset() {
@@ -66,6 +64,7 @@ public class Grid {
 
     /**
      * Creates a string representing the content of the grid, with hidden letters or not.
+     *
      * @param showUnrevealed Whether to show unrevealed letters or not
      * @return A String representing the grid
      */
@@ -76,20 +75,20 @@ public class Grid {
         StringBuilder sb = new StringBuilder();
 
         sb.append("\t");
-        for (int colName = 0; colName < grid.length; ++colName) {
+        for (int colName = 0; colName < h(); ++colName) {
             sb.append(colName);
             sb.append(' ');
         }
         sb.append('\n');
 
-        for (int i = 0; i < grid.length; ++i) {
+        for (int i = 0; i < h(); ++i) {
             sb.append(i);
             sb.append("\t");
-            for (int j = 0; j < grid.length; ++j) {
+            for (int j = 0; j < w(); ++j) {
                 if (grid[j][i] == null) {
                     sb.append(Cell.NO_LETTER_CHAR);
                 } else {
-                    if( showUnrevealed ) {
+                    if (showUnrevealed) {
                         sb.append(grid[j][i].getLetter());
                     } else {
                         sb.append(grid[j][i].toString());
@@ -128,6 +127,13 @@ public class Grid {
             }
         }
         if (remainingLetters.isEmpty()) {
+            if( ! this.isRevealed()) {
+                // Incoherent state: no question found but grid is not revealed
+                System.err.println("No question found for grid");
+                System.err.println(gridToString(false));
+                System.err.println(this.getNonRevealedWords());
+                System.err.println(gridToString(true));
+            }
             return null;
         }
         int index = (int) (Math.random() * remainingLetters.size());
@@ -150,10 +156,19 @@ public class Grid {
     }
 
     public GridWord placeWord(Word w, Orientation direction, int firstCharX, int firstCharY) {
+        return do_placeWord(w, direction, firstCharX, firstCharY, true);
+    }
+
+    private GridWord internal_placeWord(Word w, Orientation direction, int firstCharX, int firstCharY) {
+        return do_placeWord(w, direction, firstCharX, firstCharY, false);
+    }
+
+    private GridWord do_placeWord(Word w, Orientation direction, int firstCharX, int firstCharY, boolean ignoreWordsToPlace) {
         int wordLength = w.getLength();
         // Ensure the bounds of the grid are respected depending on the orientation
-        if (direction == Orientation.VERTICAL && firstCharY + wordLength > grid.length ||
-                direction == Orientation.HORIZONTAL && firstCharX + wordLength > grid[0].length) {
+        if (firstCharX >= w() || firstCharY >= h() ||
+                direction == Orientation.VERTICAL && firstCharY + wordLength > h() ||
+                direction == Orientation.HORIZONTAL && firstCharX + wordLength > w()) {
             return null;
         }
         GridWord gridWord = new GridWord(w, direction, firstCharX, firstCharY);
@@ -190,25 +205,36 @@ public class Grid {
         }
 
         // Word is placed correctly, we remove it from the words to place and save it in the placedWords
-        wordsToPlace.remove(w);
-        placedWords.put(w, gridWord);
+        if (!this.wordsToPlace.contains(w) && !ignoreWordsToPlace) {
+            throw new IllegalStateException("Error trying to place word " + w + " which is not to place: " + this.wordsToPlace);
+        }
+        if (this.placedWords.containsKey(w) && !ignoreWordsToPlace) {
+            throw new IllegalStateException("Error trying to place word " + w + " which is already placed " + this.placedWords);
+        }
+
+        this.wordsToPlace.remove(w);
+        this.placedWords.put(w, gridWord);
 
         return gridWord;
     }
 
-    /***************** METHODS FOR AUTOMATIC GRID GENERATION *************************/
+
+    ///////////////////////////////////////////
+    // METHODS FOR AUTOMATIC GRID GENERATION //
+    ///////////////////////////////////////////
 
     /**
      * Creates a copy of a grid (with new Cells) and return it.
+     *
      * @param grid the grid to copy
      * @return the copied grid
      */
     private static Cell[][] copyGrid(Cell[][] grid) {
-        Cell[][] destgrid = new Cell[grid.length][grid.length];
-        for (int i = 0; i < grid.length; ++i) {
+        Cell[][] destgrid = new Cell[grid.length][grid[0].length];
+        for (int i = 0; i < grid[0].length; ++i) {
             for (int j = 0; j < grid.length; ++j) {
-                if (grid[i][j] != null) {
-                    destgrid[i][j] = new Cell(grid[i][j]);
+                if (grid[j][i] != null) {
+                    destgrid[j][i] = new Cell(grid[j][i]);
                 }
             }
         }
@@ -221,7 +247,7 @@ public class Grid {
     private Word getLongestWord() {
         Word longestWord = null;
         int maxLength = 0;
-        for (Word w : wordsToPlace) {
+        for (Word w : this.wordsToPlace) {
             if (w.getLength() > maxLength) {
                 maxLength += w.getLength();
                 longestWord = w;
@@ -232,12 +258,13 @@ public class Grid {
 
     /**
      * Sets the grid of Cell to be big enough to contain the longest word
+     *
      * @see #getLongestWord()
      */
     private void resetGridToFitWords() {
         int maxLength = getLongestWord().getLength();
         maxLength *= 2;
-        grid = new Cell[maxLength][maxLength];
+        this.grid = new Cell[maxLength][maxLength];
     }
 
     /**
@@ -253,15 +280,24 @@ public class Grid {
 
     /**
      * Removes a word from the placed words and add it to the words to place
+     *
      * @param w The word to "unplace"
      */
     private void unplaceWord(Word w) {
-        wordsToPlace.add(w);
-        placedWords.remove(w);
+        if (this.wordsToPlace.contains(w)) {
+            throw new IllegalStateException("Error trying to unplace word " + w + " which is already to placed: " + this.wordsToPlace);
+        }
+        if (!this.placedWords.containsKey(w)) {
+            throw new IllegalStateException("Error trying to unplace word " + w + " which is not placed " + this.placedWords);
+        }
+
+        this.wordsToPlace.add(w);
+        this.placedWords.remove(w);
     }
 
     /**
      * Place a word randomly in the grid, independently of the grid content
+     *
      * @param w The word to "place"
      * @return The placed word or null
      */
@@ -270,37 +306,73 @@ public class Grid {
         int firstCharX, firstCharY;
 
         if (direction == Orientation.VERTICAL) {
-            firstCharX = (int) (Math.random() * this.grid.length);
-            firstCharY = (int) (Math.random() * (this.grid.length - w.getLength()));
+            firstCharX = (int) (Math.random() * w());
+            firstCharY = (int) (Math.random() * (h() - w.getLength()));
         } else {
-            firstCharX = (int) (Math.random() * (this.grid.length - w.getLength()));
-            firstCharY = (int) (Math.random() * this.grid.length);
+            firstCharX = (int) (Math.random() * (w() - w.getLength()));
+            firstCharY = (int) (Math.random() * h());
         }
 
-        return placeWord(w, direction, firstCharX, firstCharY);
+        return internal_placeWord(w, direction, firstCharX, firstCharY);
+    }
+
+    private Pair<Word, Pair<Integer, Integer>> findCompatibleRemainingWord() {
+        Pair<Integer, Integer> commonLetterIndexes = null;
+        HashSet<Integer> triedWordIndexes = new HashSet<>(this.wordsToPlace.size());
+        Word w = null;
+        for (GridWord previousWord : this.placedWords.values()) {
+            // As long as we didn't try everything unsuccessfully
+            while (commonLetterIndexes == null && triedWordIndexes.size() != this.wordsToPlace.size()) {
+                int randomIndex;
+                // Find a non-already tried word
+                do {
+                    randomIndex = (int) Math.round(Math.random() * (this.wordsToPlace.size() - 1));
+                } while (triedWordIndexes.contains(randomIndex));
+
+                // Check if the word is correct
+                w = (Word) this.wordsToPlace.toArray()[randomIndex];
+                commonLetterIndexes = w.indexOfFirstCommonLetter(previousWord, 0);
+                triedWordIndexes.add(randomIndex);
+            }
+            if (w != null && commonLetterIndexes != null) {
+                return new Pair<>(w, commonLetterIndexes);
+            }
+        }
+        return null;
     }
 
     /**
      * Tries to place a random word across a given previous one, while matching already placed words.
      * Failure to do so means there is no way to place a word, meaning we could either stop here or "unplace" the previousWord.
+     *
      * @param previousWord The word across which to try to place a new word
      * @return true if a word can be placed successfully, false otherwise.
      * @see #placeWordRandomly(Word)
      * @see #unplaceWord(Word)
      */
     private boolean placeNextWords(GridWord previousWord) {
-        if (wordsToPlace.isEmpty()) {
+        if (this.wordsToPlace.isEmpty()) {
             return true;
         }
 
         boolean wordPlaced = false;
+        boolean incompatibleWord = false;
 
-        while (!wordsToPlace.isEmpty()) {
-            int randomIndex = (int) (Math.random() * (wordsToPlace.size() - 1));
-            Word w = wordsToPlace.get(randomIndex);
-            Pair<Integer, Integer> indexes = w.indexOfFirstCommonLetter(previousWord, 0);
+        Word w = null;
 
-            while (!wordPlaced && indexes != null) {
+        // Place all remaining words while there isn't an incompatible one
+        while (!this.wordsToPlace.isEmpty() && !incompatibleWord) {
+            // Find a remaining word containing a common letter
+            Pair<Word, Pair<Integer, Integer>> compatibleWord = findCompatibleRemainingWord();
+            if (compatibleWord == null) {
+                // There is no more compatible word
+                return false;
+            }
+            Pair<Integer, Integer> commonLetterIndexes = compatibleWord.getValue();
+            w = compatibleWord.getKey();
+
+            wordPlaced = false;
+            while (!wordPlaced && commonLetterIndexes != null) {
                 int firstCharX, firstCharY;
 
                 // Get the opposite direction of the previous word
@@ -310,73 +382,82 @@ public class Grid {
                 }
 
                 if (direction == Orientation.VERTICAL) {
-                    firstCharX = previousWord.getX() + indexes.getValue();
-                    firstCharY = previousWord.getY() - indexes.getKey();
+                    firstCharX = previousWord.getX() + commonLetterIndexes.getValue();
+                    firstCharY = previousWord.getY() - commonLetterIndexes.getKey();
                 } else {
-                    firstCharX = previousWord.getX() - indexes.getKey();
-                    firstCharY = previousWord.getY() + indexes.getValue();
+                    firstCharX = previousWord.getX() - commonLetterIndexes.getKey();
+                    firstCharY = previousWord.getY() + commonLetterIndexes.getValue();
                 }
-                if (firstCharX < 0 || firstCharY < 0) {
-                    indexes = w.indexOfFirstCommonLetter(previousWord, indexes.getValue() + 1);
+                if (firstCharX < 0 || firstCharY < 0 || firstCharX >= w() || firstCharY >= h()) {
+                    commonLetterIndexes = w.indexOfFirstCommonLetter(previousWord, commonLetterIndexes.getValue() + 1);
                     continue;
                 }
                 Cell[][] backupGrid = copyGrid(this.grid);
-                printdebugln("Placing word '" + w + "' with word '" + previousWord + "' (on " + w.getLetter(indexes.getKey()) + ")(" + firstCharX + "," + firstCharY + ")");
-                GridWord wig = placeWord(w, direction, firstCharX, firstCharY);
+                printdebugln("Placing word " + w + " with word " + previousWord + " (on " + w.getLetter(commonLetterIndexes.getKey()) + ")(" + firstCharX + "," + firstCharY + ")");
+                GridWord gridWord = internal_placeWord(w, direction, firstCharX, firstCharY);
 
-                if (wig == null) {
+                if (gridWord == null) {
                     printdebugln("\t Can't place word, retrying");
-                    indexes = w.indexOfFirstCommonLetter(previousWord, indexes.getValue() + 1);
+                    printdebugln("\t Remaining to place: " + this.wordsToPlace);
+                    commonLetterIndexes = w.indexOfFirstCommonLetter(previousWord, commonLetterIndexes.getValue() + 1);
                     this.grid = backupGrid;
                     continue;
                 }
+                printdebugln("\t Remaining to place: " + this.wordsToPlace);
                 printdebugln(gridToString(true));
 
                 GridWord olderPreviousWord = previousWord;
-                previousWord = wig;
+                previousWord = gridWord;
                 wordPlaced = placeNextWords(previousWord);
                 if (!wordPlaced) {
                     unplaceWord(w);
                     previousWord = olderPreviousWord;
-                    indexes = w.indexOfFirstCommonLetter(previousWord, indexes.getValue() + 1);
+                    commonLetterIndexes = w.indexOfFirstCommonLetter(previousWord, commonLetterIndexes.getValue() + 1);
                     this.grid = backupGrid;
 
-                    printdebugln("\t Previous word unplaced");
+                    printdebugln("\t Previous word " + w + " unplaced");
+                    printdebugln("\t Remaining to place: " + this.wordsToPlace);
                     printdebugln(gridToString(true));
                 }
             }
-            if (indexes == null) {
-                // Need to pick another word
-                printdebugln("Incompatible word: '" + w + "'");
-                printdebugln(gridToString(true));
 
-                wordsToPlace.remove(w);
-                break;
+            if (commonLetterIndexes == null) {
+                // Selected word w can't be placed across previousWord Need to pick another word
+                printdebugln("Incompatible word: " + w + " with " + previousWord);
+                printdebugln(gridToString(true));
+                incompatibleWord = true;
+                this.wordsToPlace.remove(w);
+                printdebugln("\t Remaining to place: " + this.wordsToPlace);
             }
         }
 
         if (!wordPlaced) {
             // Need to replace previous word
-            printdebugln("Need to unplace previous word");
-            printdebugln(gridToString(true));
+            printdebugln("Impossible to place a word");
             return false;
         }
-        printdebugln("Done");
+        printdebugln("Word " + w + " placed.");
         return true;
     }
 
     public void compute() {
         boolean incorrect = true;
         while (incorrect) {
+            this.wordsToPlace.clear();
+            this.placedWords.clear();
+
+            ///////////////////////////////////////////
+            // Generating the grid with random words //
+            ///////////////////////////////////////////
             ArrayList<Word> wordsList = new ArrayList<>(Game.getInstance().getWords().values());
-            printdebugln("\n========================\nCreating new grid with: "+wordsList+"\n========================");
             for (int i = 0; i < Grid.MAX_WORDS_COUNT && wordsList.size() > 0; i++) {
                 int randomIndex = (int) (Math.random() * wordsList.size());
                 Word w = wordsList.remove(randomIndex);
-                wordsToPlace.add(w);
+                this.wordsToPlace.add(w);
             }
+            printdebugln("\n========================\nCreating new grid with: " + this.wordsToPlace + "\n========================");
             resetGridToFitWords();
-            placedWords = new HashMap<>();
+
 
             // Handle first word
             Word longestWord = getLongestWord();
@@ -384,16 +465,27 @@ public class Grid {
             boolean allPlaced = false;
             while (!allPlaced) {
                 Cell[][] backupGrid = copyGrid(this.grid);
-                //WordInGrid firstWord = placeWordRandomly(this.grid, longestWord);
                 GridWord firstWord = placeWordRandomly(longestWord);
-                assert (firstWord != null);
+
+                printdebugln("Placing first word " + longestWord + " (" + firstWord.getX() + "," + firstWord.getY() + ")");
+                printdebugln(gridToString(true));
 
                 // Handle other wordsToPlace);
                 if (!placeNextWords(firstWord)) {
-                    unplaceWord(longestWord);
+                    this.placedWords = new HashMap<>();
+                    wordsList = new ArrayList<>(Game.getInstance().getWords().values());
+                    for (int i = 0; i < Grid.MAX_WORDS_COUNT && wordsList.size() > 0; i++) {
+                        int randomIndex = (int) (Math.random() * wordsList.size());
+                        Word w = wordsList.remove(randomIndex);
+                        this.wordsToPlace.add(w);
+                    }
+
                     this.grid = backupGrid;
+                    printdebugln("\t First word unplaced");
+                    printdebugln(gridToString(true));
                 } else {
                     allPlaced = true;
+                    printdebugln("\n========================\nGrid computed with: " + this.placedWords.keySet() + "\n========================");
                 }
             }
             /////////////////////////////////////////////////
@@ -402,21 +494,23 @@ public class Grid {
 
             // We have enough word
             incorrect = placedWords.size() < MIN_WORDS_COUNT;
-            if( incorrect ) {
+            if (incorrect) {
+                printdebugln("Resulting grid is incorrect, restarting with new words");
+                printdebugln(gridToString(true));
                 continue;
             }
 
             // We don't have a word next to another one, in the same direction
             for (GridWord gw : this.placedWords.values()) {
                 if (gw.getOrientation() == Orientation.HORIZONTAL) {
-                    for (int i = gw.getX(); i < gw.getLength()+gw.getX() && i < this.grid.length; i++) {
+                    for (int i = gw.getX(); i < gw.getLength() + gw.getX() && i < w(); i++) {
                         if (gw.getY() > 0 && this.grid[i][gw.getY() - 1] != null) {
                             if (this.grid[i][gw.getY() - 1].getWord().getOrientation() == Orientation.HORIZONTAL) {
                                 incorrect = true;
                                 break;
                             }
                         }
-                        if (gw.getY() < this.grid.length - 1 && this.grid[i][gw.getY() + 1] != null) {
+                        if (gw.getY() < h() - 1 && this.grid[i][gw.getY() + 1] != null) {
                             if (this.grid[i][gw.getY() + 1].getWord().getOrientation() == Orientation.HORIZONTAL) {
                                 incorrect = true;
                                 break;
@@ -424,15 +518,15 @@ public class Grid {
                         }
                     }
                 } else {
-                    for (int i = gw.getY(); i < gw.getLength(); i++) {
-                        if (gw.getX() > 0 && this.grid[gw.getX() - 1][i] != null) {
-                            if (this.grid[gw.getX() - 1][i].getWord().getOrientation() == Orientation.VERTICAL) {
+                    for (int j = gw.getY(); j < gw.getLength() + gw.getY() && j < h(); j++) {
+                        if (gw.getX() > 0 && this.grid[gw.getX() - 1][j] != null) {
+                            if (this.grid[gw.getX() - 1][j].getWord().getOrientation() == Orientation.VERTICAL) {
                                 incorrect = true;
                                 break;
                             }
                         }
-                        if (gw.getX() < this.grid.length - 1 && this.grid[gw.getX() + 1][i] != null) {
-                            if (this.grid[gw.getX() + 1][i].getWord().getOrientation() == Orientation.VERTICAL) {
+                        if (gw.getX() < w() - 1 && this.grid[gw.getX() + 1][j] != null) {
+                            if (this.grid[gw.getX() + 1][j].getWord().getOrientation() == Orientation.VERTICAL) {
                                 incorrect = true;
                                 break;
                             }

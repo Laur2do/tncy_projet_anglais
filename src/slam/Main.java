@@ -20,7 +20,7 @@ import java.util.HashMap;
 
 public class Main extends Application {
 
-    public final static boolean DEBUG = true;
+    private final static boolean DEBUG = true;
     public final static String TITLE = "Grand Chelem";
 
     public static void printdebugln(Object obj) {
@@ -41,7 +41,7 @@ public class Main extends Application {
                 System.out.println("================================");
                 HashMap<String, Word> words = game.getWords();
                 for (Word w : words.values()) {
-                    System.out.println(w.toString());
+                    System.out.println(w.getDescription());
                 }
                 System.out.println("================================");
                 System.out.println("Loaded " + questionsLoaded + " questions");
