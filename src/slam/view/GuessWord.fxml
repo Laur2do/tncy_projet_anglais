@@ -6,20 +6,18 @@
 <?import javafx.scene.text.Font?>
 
 <VBox alignment="CENTER" prefWidth="200.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="slam.controller.GuessWordCtl">
-   <children>
-      <Label focusTraversable="false" text="Guess the word!" textAlignment="CENTER">
-         <font>
-            <Font name="System Bold" size="25.0" />
-         </font>
-      </Label>
-      <TextField fx:id="answer" alignment="CENTER" onAction="#validate" prefColumnCount="26" styleClass="answer-input">
-         <font>
-            <Font size="22.0" />
-         </font></TextField>
-      <Label fx:id="definition" focusTraversable="false" textAlignment="CENTER" wrapText="true">
-         <font>
-            <Font name="System Bold" size="20.0" />
-         </font>
-      </Label>
-   </children>
+   <Label text="Guess the word!" textAlignment="CENTER">
+      <font>
+         <Font name="System Bold" size="25.0" />
+      </font>
+   </Label>
+   <TextField fx:id="answer" alignment="CENTER" onAction="#validate" prefColumnCount="26" styleClass="answer-input">
+      <font>
+         <Font size="22.0" />
+      </font></TextField>
+   <Label fx:id="definition" textAlignment="CENTER" wrapText="true">
+      <font>
+         <Font name="System Bold" size="20.0" />
+      </font>
+   </Label>
 </VBox>

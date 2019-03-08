@@ -69,7 +69,7 @@ public class QuestionCtl implements Observer {
         messageLabel.setText("");
     }
 
-    public void displayError(String s) {
+    private void displayError(String s) {
         printdebugln(s);
         printdebugln("Here is the question: \t" + this.currentQuestion);
 
@@ -110,6 +110,13 @@ public class QuestionCtl implements Observer {
         messageLabel.getStyleClass().add("success");
 
         this.gridCtl.setEnableGuess(true, this);
+    }
+
+
+    public void showCongratulations() {
+        messageLabel.setText("You guess the entire grid, congratulations!");
+        messageLabel.getStyleClass().clear();
+        messageLabel.getStyleClass().add("congratulations");
     }
 
 

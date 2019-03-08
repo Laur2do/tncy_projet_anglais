@@ -8,28 +8,24 @@
 <?import javafx.scene.text.Font?>
 
 <VBox prefWidth="1280.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1">
-   <children>
-      <Label fx:id="question" alignment="CENTER" contentDisplay="CENTER" prefWidth="1280.0" text="?" textAlignment="CENTER" wrapText="true">
+   <Label fx:id="question" alignment="CENTER" contentDisplay="CENTER" prefWidth="1280.0" text="?" textAlignment="CENTER" wrapText="true">
+      <font>
+         <Font size="25.0" />
+      </font>
+   </Label>
+   <HBox alignment="CENTER">
+      <TextField fx:id="answer" alignment="CENTER" prefColumnCount="1" prefWidth="60.0" styleClass="answer-input" HBox.hgrow="NEVER">
          <font>
             <Font size="25.0" />
          </font>
-      </Label>
-      <HBox alignment="CENTER">
-         <children>
-            <TextField fx:id="answer" alignment="CENTER" prefColumnCount="1" prefWidth="60.0" styleClass="answer-input" HBox.hgrow="NEVER">
-               <font>
-                  <Font size="25.0" />
-               </font>
-               <HBox.margin>
-                  <Insets />
-               </HBox.margin>
-            </TextField>
-         </children>
-      </HBox>
-      <HBox fillHeight="false" />
-      <Label fx:id="message" alignment="CENTER" contentDisplay="CENTER" prefWidth="1280.0" textAlignment="CENTER" wrapText="true">
-         <font>
-            <Font size="25.0" />
-         </font></Label>
-   </children>
+         <HBox.margin>
+            <Insets />
+         </HBox.margin>
+      </TextField>
+   </HBox>
+   <HBox fillHeight="false" />
+   <Label fx:id="message" alignment="CENTER" contentDisplay="CENTER" prefWidth="1280.0" textAlignment="CENTER" wrapText="true">
+      <font>
+         <Font size="25.0" />
+      </font></Label>
 </VBox>

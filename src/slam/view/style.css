@@ -40,6 +40,11 @@
     -fx-text-fill: #48A43B;
 }
 
+.congratulations {
+    -fx-text-fill: #3D6CF7;
+    -fx-font-weight: bold;
+}
+
 .error {
     -fx-text-fill: #B22D24;
 }

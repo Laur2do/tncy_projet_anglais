@@ -1,6 +1,7 @@
 package slam.controller;
 
 import javafx.fxml.FXML;
+import javafx.scene.Cursor;
 import javafx.scene.control.Dialog;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
@@ -33,7 +34,12 @@ public class WindowCtl {
     }
 
     public void newRandomGrid() {
+        root.setCursor(Cursor.WAIT);
+        root.getCenter().setDisable(true);
+
         Game.getInstance().generateRandomCurrentGrid();
+        root.setCursor(Cursor.DEFAULT);
+        root.getCenter().setDisable(false);
         printdebugln(Game.getInstance().getCurrentGrid());
     }
 

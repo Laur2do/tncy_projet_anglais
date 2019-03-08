@@ -122,6 +122,11 @@ public class Game extends Observable {
     public Question getRandomQuestionForLetter(char letter) {
         ArrayList<Question> letterQuestions = questions.get(letter);
         if (letterQuestions.size() == 0) {
+            if( ! this.currentGrid.isRevealed()) {
+                // Incoherent state: no question found but grid is not revealed
+                System.err.println("No question found for letter "+letter);
+                System.err.println(this.currentGrid);
+            }
             return null;
         }
         int index = (int) (Math.random() * letterQuestions.size());

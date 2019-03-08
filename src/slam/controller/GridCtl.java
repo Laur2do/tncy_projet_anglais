@@ -14,6 +14,8 @@ import java.io.IOException;
 import java.util.Observable;
 import java.util.Observer;
 
+import static slam.Main.printdebugln;
+
 
 public class GridCtl implements Observer {
     private GridPane gridPane;
@@ -68,10 +70,13 @@ public class GridCtl implements Observer {
                 centerBorderPane.setBottom(this.questionPane);
                 l.execute();
                 this.setEnableGuess(false, this.questionCtl);
-                if (this.questionCtl != null) {
+                if (Game.getInstance().getCurrentGrid().isRevealed()) {
+                    this.questionCtl.showCongratulations();
+                } else {
                     this.questionCtl.cleanMessage();
                     this.questionCtl.setNewQuestion();
                 }
+
             });
 
         } catch (IOException ioe) {
@@ -113,7 +118,7 @@ public class GridCtl implements Observer {
                     cellLabel.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
                         if (this.canGuessWord && !gw.isRevealed()) {
                             showGuessWord(gw, () -> {
-                                System.out.println(currentGrid);
+                                printdebugln(currentGrid.toString());
                                 for (Label label : cellLabels) {
                                     label.getStyleClass().remove("cell-focus");
                                 }

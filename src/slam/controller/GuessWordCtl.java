@@ -29,7 +29,7 @@ public class GuessWordCtl {
         int wordLength = this.gridWord.getLength();
         this.definition.setText(gw.getDefinitions());
 
-        System.out.println("You picked " + gw.toString());
+        printdebugln("You picked " + gw.toString());
 
         this.answer.setPrefColumnCount(wordLength);
         this.answer.setMaxWidth(wordLength * this.answer.getFont().getSize());
