@@ -129,7 +129,7 @@ public class Grid {
         if (remainingLetters.isEmpty()) {
             if( ! this.isRevealed()) {
                 // Incoherent state: no question found but grid is not revealed
-                System.err.println("No question found for grid");
+                System.err.println("No remaining unrevealed letter found for grid");
                 System.err.println(gridToString(false));
                 System.err.println(this.getNonRevealedWords());
                 System.err.println(gridToString(true));
@@ -316,7 +316,7 @@ public class Grid {
         return internal_placeWord(w, direction, firstCharX, firstCharY);
     }
 
-    private Pair<Word, Pair<Integer, Integer>> findCompatibleRemainingWord() {
+    private Pair<Pair<Word, GridWord>, Pair<Integer, Integer>> findCompatibleRemainingWord() {
         Pair<Integer, Integer> commonLetterIndexes = null;
         HashSet<Integer> triedWordIndexes = new HashSet<>(this.wordsToPlace.size());
         Word w = null;
@@ -335,7 +335,7 @@ public class Grid {
                 triedWordIndexes.add(randomIndex);
             }
             if (w != null && commonLetterIndexes != null) {
-                return new Pair<>(w, commonLetterIndexes);
+                return new Pair<>(new Pair<>(w, previousWord), commonLetterIndexes);
             }
         }
         return null;
@@ -345,12 +345,11 @@ public class Grid {
      * Tries to place a random word across a given previous one, while matching already placed words.
      * Failure to do so means there is no way to place a word, meaning we could either stop here or "unplace" the previousWord.
      *
-     * @param previousWord The word across which to try to place a new word
      * @return true if a word can be placed successfully, false otherwise.
      * @see #placeWordRandomly(Word)
      * @see #unplaceWord(Word)
      */
-    private boolean placeNextWords(GridWord previousWord) {
+    private boolean placeNextWords() {
         if (this.wordsToPlace.isEmpty()) {
             return true;
         }
@@ -363,13 +362,14 @@ public class Grid {
         // Place all remaining words while there isn't an incompatible one
         while (!this.wordsToPlace.isEmpty() && !incompatibleWord) {
             // Find a remaining word containing a common letter
-            Pair<Word, Pair<Integer, Integer>> compatibleWord = findCompatibleRemainingWord();
+            Pair<Pair<Word, GridWord>, Pair<Integer, Integer>> compatibleWord = findCompatibleRemainingWord();
             if (compatibleWord == null) {
                 // There is no more compatible word
                 return false;
             }
             Pair<Integer, Integer> commonLetterIndexes = compatibleWord.getValue();
-            w = compatibleWord.getKey();
+            w = compatibleWord.getKey().getKey();
+            GridWord previousWord = compatibleWord.getKey().getValue();
 
             wordPlaced = false;
             while (!wordPlaced && commonLetterIndexes != null) {
@@ -408,7 +408,7 @@ public class Grid {
 
                 GridWord olderPreviousWord = previousWord;
                 previousWord = gridWord;
-                wordPlaced = placeNextWords(previousWord);
+                wordPlaced = placeNextWords();
                 if (!wordPlaced) {
                     unplaceWord(w);
                     previousWord = olderPreviousWord;
@@ -426,7 +426,6 @@ public class Grid {
                 printdebugln("Incompatible word: " + w + " with " + previousWord);
                 printdebugln(gridToString(true));
                 incompatibleWord = true;
-                this.wordsToPlace.remove(w);
                 printdebugln("\t Remaining to place: " + this.wordsToPlace);
             }
         }
@@ -471,7 +470,7 @@ public class Grid {
                 printdebugln(gridToString(true));
 
                 // Handle other wordsToPlace);
-                if (!placeNextWords(firstWord)) {
+                if (!placeNextWords()) {
                     this.placedWords = new HashMap<>();
                     wordsList = new ArrayList<>(Game.getInstance().getWords().values());
                     for (int i = 0; i < Grid.MAX_WORDS_COUNT && wordsList.size() > 0; i++) {
