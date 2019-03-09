@@ -7,8 +7,8 @@ public class Cell implements Observer {
     public static final char NO_LETTER_CHAR = ' ';
     public static final char NOT_REVEALED_LETTER_CHAR = '*';
 
-    private int wordIndex;
-    private GridWord word;
+    private final int wordIndex;
+    private final GridWord word;
     private boolean revealed;
 
     public char getLetter() {

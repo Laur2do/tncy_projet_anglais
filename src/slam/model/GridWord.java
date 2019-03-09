@@ -4,11 +4,11 @@ import java.util.Arrays;
 
 public class GridWord extends Word {
 
-    private Orientation orientation;
-    private boolean[] revealedLetters;
+    private final Orientation orientation;
+    private final boolean[] revealedLetters;
 
-    private int firstCharX;
-    private int firstCharY;
+    private final int firstCharX;
+    private final int firstCharY;
 
     public GridWord(Word word, Orientation orientation, int firstCharX, int firstCharY) {
         super(word);

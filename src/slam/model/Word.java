@@ -54,7 +54,7 @@ public class Word extends Observable {
         }
     }
 
-    public Word(Word content) {
+    protected Word(Word content) {
         try {
             init(content.content, content.englishDefinition, content.frenchDefinition);
         } catch (WordException e) {

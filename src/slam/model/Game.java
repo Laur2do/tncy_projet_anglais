@@ -13,14 +13,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Observable;
 
-import static slam.Main.printdebugln;
+import static slam.Main.printDebugLn;
 
 public class Game extends Observable {
 
     private static Game instance;
-    private ArrayList<Grid> listOfGrids;
-    private HashMap<String, HashMap<String, Word>> words;
-    private HashMap<Character, ArrayList<Question>> questions;
+    private final ArrayList<Grid> listOfGrids;
+    private final HashMap<String, HashMap<String, Word>> words;
+    private final HashMap<Character, ArrayList<Question>> questions;
 
     private Grid currentGrid;
 
@@ -104,7 +104,7 @@ public class Game extends Observable {
         if( this.listOfGrids.isEmpty() ) {
             return null;
         }
-        printdebugln("Loading new grid");
+        printDebugLn("Loading new grid");
         int index = (int) (Math.random() * this.listOfGrids.size());
         this.currentGrid = this.listOfGrids.get(index);
         setChanged();
@@ -113,7 +113,7 @@ public class Game extends Observable {
     }
 
     public void generateRandomCurrentGrid() {
-        printdebugln("Computing new grid");
+        printDebugLn("Computing new grid");
         this.currentGrid = new Grid();
         this.currentGrid.compute();
         setChanged();

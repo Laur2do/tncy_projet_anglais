@@ -14,11 +14,11 @@ import java.io.IOException;
 import java.util.Observable;
 import java.util.Observer;
 
-import static slam.Main.printdebugln;
+import static slam.Main.printDebugLn;
 
 
 public class GridCtl implements Observer {
-    private GridPane gridPane;
+    private final GridPane gridPane;
     private Node questionPane;
 
     private QuestionCtl questionCtl;
@@ -82,9 +82,9 @@ public class GridCtl implements Observer {
         }
     }
 
-    public void setEnableGuess(boolean enable, QuestionCtl qctl) {
+    public void setEnableGuess(boolean enable, QuestionCtl questionCtl) {
         this.canGuessWord = enable;
-        this.questionCtl = qctl;
+        this.questionCtl = questionCtl;
     }
 
     public void updateGridPane() {
@@ -116,7 +116,7 @@ public class GridCtl implements Observer {
                     cellLabel.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
                         if (this.canGuessWord && !gw.isRevealed()) {
                             showGuessWord(gw, () -> {
-                                printdebugln(currentGrid.toString());
+                                printDebugLn(currentGrid.toString());
                                 for (Label label : cellLabels) {
                                     label.getStyleClass().remove("cell-focus");
                                 }

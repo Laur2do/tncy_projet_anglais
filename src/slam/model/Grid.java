@@ -4,7 +4,7 @@ import javafx.util.Pair;
 
 import java.util.*;
 
-import static slam.Main.printdebugln;
+import static slam.Main.printDebugLn;
 
 public class Grid {
 
@@ -27,7 +27,7 @@ public class Grid {
 
     private HashMap<Word, GridWord> placedWords;
 
-    private HashSet<Word> wordsToPlace;
+    private final HashSet<Word> wordsToPlace;
 
     public Grid() {
         this(MAX_GRID_WIDTH, MAX_GRID_HEIGHT);
@@ -230,15 +230,15 @@ public class Grid {
      * @return the copied grid
      */
     private static Cell[][] copyGrid(Cell[][] grid) {
-        Cell[][] destgrid = new Cell[grid.length][grid[0].length];
+        Cell[][] newGrid = new Cell[grid.length][grid[0].length];
         for (int i = 0; i < grid[0].length; ++i) {
             for (int j = 0; j < grid.length; ++j) {
                 if (grid[j][i] != null) {
-                    destgrid[j][i] = new Cell(grid[j][i]);
+                    newGrid[j][i] = new Cell(grid[j][i]);
                 }
             }
         }
-        return destgrid;
+        return newGrid;
     }
 
     /**
@@ -281,14 +281,14 @@ public class Grid {
     /**
      * Removes a word from the placed words and add it to the words to place
      *
-     * @param w The word to "unplace"
+     * @param w The word to "remove"
      */
-    private void unplaceWord(Word w) {
+    private void removeWord(Word w) {
         if (this.wordsToPlace.contains(w)) {
-            throw new IllegalStateException("Error trying to unplace word " + w + " which is already to placed: " + this.wordsToPlace);
+            throw new IllegalStateException("Error trying to remove word " + w + " which is already to placed: " + this.wordsToPlace);
         }
         if (!this.placedWords.containsKey(w)) {
-            throw new IllegalStateException("Error trying to unplace word " + w + " which is not placed " + this.placedWords);
+            throw new IllegalStateException("Error trying to remove word " + w + " which is not placed " + this.placedWords);
         }
 
         this.wordsToPlace.add(w);
@@ -343,11 +343,11 @@ public class Grid {
 
     /**
      * Tries to place a random word across a given previous one, while matching already placed words.
-     * Failure to do so means there is no way to place a word, meaning we could either stop here or "unplace" the previousWord.
+     * Failure to do so means there is no way to place a word, meaning we could either stop here or "remove" the previousWord.
      *
      * @return true if a word can be placed successfully, false otherwise.
      * @see #placeWordRandomly(Word)
-     * @see #unplaceWord(Word)
+     * @see #removeWord(Word)
      */
     private boolean placeNextWords() {
         if (this.wordsToPlace.isEmpty()) {
@@ -393,49 +393,49 @@ public class Grid {
                     continue;
                 }
                 Cell[][] backupGrid = copyGrid(this.grid);
-                printdebugln("Placing word " + w + " with word " + previousWord + " (on " + w.getLetter(commonLetterIndexes.getKey()) + ")(" + firstCharX + "," + firstCharY + ")");
+                printDebugLn("Placing word " + w + " with word " + previousWord + " (on " + w.getLetter(commonLetterIndexes.getKey()) + ")(" + firstCharX + "," + firstCharY + ")");
                 GridWord gridWord = internal_placeWord(w, direction, firstCharX, firstCharY);
 
                 if (gridWord == null) {
-                    printdebugln("\t Can't place word, retrying");
-                    printdebugln("\t Remaining to place: " + this.wordsToPlace);
+                    printDebugLn("\t Can't place word, retrying");
+                    printDebugLn("\t Remaining to place: " + this.wordsToPlace);
                     commonLetterIndexes = w.indexOfFirstCommonLetter(previousWord, commonLetterIndexes.getValue() + 1);
                     this.grid = backupGrid;
                     continue;
                 }
-                printdebugln("\t Remaining to place: " + this.wordsToPlace);
-                printdebugln(gridToString(true));
+                printDebugLn("\t Remaining to place: " + this.wordsToPlace);
+                printDebugLn(gridToString(true));
 
                 GridWord olderPreviousWord = previousWord;
                 previousWord = gridWord;
                 wordPlaced = placeNextWords();
                 if (!wordPlaced) {
-                    unplaceWord(w);
+                    removeWord(w);
                     previousWord = olderPreviousWord;
                     commonLetterIndexes = w.indexOfFirstCommonLetter(previousWord, commonLetterIndexes.getValue() + 1);
                     this.grid = backupGrid;
 
-                    printdebugln("\t Previous word " + w + " unplaced");
-                    printdebugln("\t Remaining to place: " + this.wordsToPlace);
-                    printdebugln(gridToString(true));
+                    printDebugLn("\t Previous word " + w + " unplaced");
+                    printDebugLn("\t Remaining to place: " + this.wordsToPlace);
+                    printDebugLn(gridToString(true));
                 }
             }
 
             if (commonLetterIndexes == null) {
                 // Selected word w can't be placed across previousWord Need to pick another word
-                printdebugln("Incompatible word: " + w + " with " + previousWord);
-                printdebugln(gridToString(true));
+                printDebugLn("Incompatible word: " + w + " with " + previousWord);
+                printDebugLn(gridToString(true));
                 incompatibleWord = true;
-                printdebugln("\t Remaining to place: " + this.wordsToPlace);
+                printDebugLn("\t Remaining to place: " + this.wordsToPlace);
             }
         }
 
         if (!wordPlaced) {
             // Need to replace previous word
-            printdebugln("Impossible to place a word");
+            printDebugLn("Impossible to place a word");
             return false;
         }
-        printdebugln("Word " + w + " placed.");
+        printDebugLn("Word " + w + " placed.");
         return true;
     }
 
@@ -454,7 +454,7 @@ public class Grid {
                 Word w = wordsList.remove(randomIndex);
                 this.wordsToPlace.add(w);
             }
-            printdebugln("\n========================\nCreating new grid with: " + this.wordsToPlace + "\n========================");
+            printDebugLn("\n========================\nCreating new grid with: " + this.wordsToPlace + "\n========================");
             resetGridToFitWords();
 
 
@@ -466,8 +466,8 @@ public class Grid {
                 Cell[][] backupGrid = copyGrid(this.grid);
                 GridWord firstWord = placeWordRandomly(longestWord);
 
-                printdebugln("Placing first word " + longestWord + " (" + firstWord.getX() + "," + firstWord.getY() + ")");
-                printdebugln(gridToString(true));
+                printDebugLn("Placing first word " + longestWord + " (" + firstWord.getX() + "," + firstWord.getY() + ")");
+                printDebugLn(gridToString(true));
 
                 // Handle other wordsToPlace);
                 if (!placeNextWords()) {
@@ -480,11 +480,11 @@ public class Grid {
                     }
 
                     this.grid = backupGrid;
-                    printdebugln("\t First word unplaced");
-                    printdebugln(gridToString(true));
+                    printDebugLn("\t First word unplaced");
+                    printDebugLn(gridToString(true));
                 } else {
                     allPlaced = true;
-                    printdebugln("\n========================\nGrid computed with: " + this.placedWords.keySet() + "\n========================");
+                    printDebugLn("\n========================\nGrid computed with: " + this.placedWords.keySet() + "\n========================");
                 }
             }
             /////////////////////////////////////////////////
@@ -494,8 +494,8 @@ public class Grid {
             // We have enough word
             incorrect = placedWords.size() < MIN_WORDS_COUNT;
             if (incorrect) {
-                printdebugln("Resulting grid is incorrect, restarting with new words");
-                printdebugln(gridToString(true));
+                printDebugLn("Resulting grid is incorrect, restarting with new words");
+                printDebugLn(gridToString(true));
                 continue;
             }
 
@@ -534,8 +534,8 @@ public class Grid {
                 }
             }
             if (incorrect) {
-                printdebugln(gridToString(true));
-                printdebugln("Resulting grid is incorrect, restarting with new words");
+                printDebugLn(gridToString(true));
+                printDebugLn("Resulting grid is incorrect, restarting with new words");
             }
         }
     }

@@ -81,9 +81,9 @@ public class DataLoader {
             int lineNumber = 0;
 
             //The first line contains the header and the grid dimensions
-            String[] infos = source_file.readLine().split(",");
-            if (infos.length == 6) {
-                grid = new Grid(Integer.valueOf(infos[4]), Integer.valueOf(infos[5]));
+            String[] info = source_file.readLine().split(",");
+            if (info.length == 6) {
+                grid = new Grid(Integer.valueOf(info[4]), Integer.valueOf(info[5]));
             } else {
                 grid = new Grid();
             }
@@ -94,7 +94,7 @@ public class DataLoader {
                 String[] tabStrings = line.split(",");
 
                 if (tabStrings.length != 4) {
-                    throw new InvalidGridFileException(path, lineNumber, line, "Each line in a GridCtl file must contain content,orientation,startx,starty");
+                    throw new InvalidGridFileException(path, lineNumber, line, "Each line in a GridCtl file must contain content,orientation,start_x,start_y");
                 }
                 tabStrings[0] = tabStrings[0].toUpperCase();
                 tabStrings[1] = tabStrings[1].toUpperCase();

@@ -2,9 +2,9 @@ package slam.model;
 
 public class Question {
 
-    private String question;
-    private char letter;
-    private String explanation;
+    private final String question;
+    private final char letter;
+    private final String explanation;
 
     public Question(String question, char letter, String explanation) {
         this.question = question;

@@ -8,7 +8,7 @@ import slam.model.GridWord;
 
 import java.util.function.UnaryOperator;
 
-import static slam.Main.printdebugln;
+import static slam.Main.printDebugLn;
 
 public class GuessWordCtl {
 
@@ -29,7 +29,7 @@ public class GuessWordCtl {
         int wordLength = this.gridWord.getLength();
         this.definition.setText(gw.getDefinitions());
 
-        printdebugln("You picked " + gw.toString());
+        printDebugLn("You picked " + gw.toString());
 
         this.answer.setPrefColumnCount(wordLength);
         this.answer.setMaxWidth(wordLength * this.answer.getFont().getSize());
@@ -50,10 +50,10 @@ public class GuessWordCtl {
 
     public void validate() {
         if (this.gridWord.getContent().equals(this.answer.getText().toUpperCase())) {
-            printdebugln("> " + this.answer.getText() + "\nCorrect!");
+            printDebugLn("> " + this.answer.getText() + "\nCorrect!");
             this.gridWord.reveal();
         } else {
-            printdebugln("> " + this.answer.getText() + "\nIncorrect!");
+            printDebugLn("> " + this.answer.getText() + "\nIncorrect!");
         }
     }
 }

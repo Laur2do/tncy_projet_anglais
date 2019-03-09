@@ -4,11 +4,11 @@ import java.text.ParseException;
 
 public class InvalidFileException extends ParseException {
 
-    public InvalidFileException(String filepath, int lineNumber, String lineContent) {
-        super("Invalid file " + filepath + ":" + lineNumber + "\n\t" + lineContent, lineNumber);
+    protected InvalidFileException(String filePath, int lineNumber, String lineContent) {
+        super("Invalid file " + filePath + ":" + lineNumber + "\n\t" + lineContent, lineNumber);
     }
 
-    public InvalidFileException(String filepath, int lineNumber, String lineContent, String comment) {
-        super("Invalid file " + filepath + ":" + lineNumber + "\n\t" + lineContent + "\n\t\\-> " + comment, lineNumber);
+    protected InvalidFileException(String filePath, int lineNumber, String lineContent, String comment) {
+        super("Invalid file " + filePath + ":" + lineNumber + "\n\t" + lineContent + "\n\t\\-> " + comment, lineNumber);
     }
 }

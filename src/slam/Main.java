@@ -15,7 +15,7 @@ public class Main extends Application {
     private final static boolean DEBUG = false;
     public final static String TITLE = "Grand Chelem";
 
-    public static void printdebugln(Object obj) {
+    public static void printDebugLn(Object obj) {
         if( DEBUG ) {
             System.out.println(obj);
         }

@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
-import static slam.Main.printdebugln;
+import static slam.Main.printDebugLn;
 
 
 public class WindowCtl {
@@ -46,15 +46,15 @@ public class WindowCtl {
             int loadedGrids = Game.getInstance().loadGrids("data/grids");
             int loadedQuestions = Game.getInstance().loadQuestions("data/questions.csv");
             
-            printdebugln("Loaded " + loadedWords + " words");
-            printdebugln("================================");
+            printDebugLn("Loaded " + loadedWords + " words");
+            printDebugLn("================================");
             HashMap<String, Word> words = Game.getInstance().getWords();
             for (Word w : words.values()) {
-                printdebugln(w.getDescription());
+                printDebugLn(w.getDescription());
             }
-            printdebugln("================================");
-            printdebugln("Loaded " + loadedQuestions + " questions");
-            printdebugln("Loaded " + loadedGrids + " grids");
+            printDebugLn("================================");
+            printDebugLn("Loaded " + loadedQuestions + " questions");
+            printDebugLn("Loaded " + loadedGrids + " grids");
 
             Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
             confirm.setTitle("Default data files loaded!");
@@ -89,7 +89,7 @@ public class WindowCtl {
                 ioe.printStackTrace();
                 showErrorAlert(wordFile, ioe);
             }catch(InvalidWordFileException iwfe) {
-                printdebugln(iwfe);
+                printDebugLn(iwfe);
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Error in Word file");
                 alert.setHeaderText("Error in Word file "+wordFile);
@@ -99,7 +99,7 @@ public class WindowCtl {
                 iwfe.printStackTrace();
             }
         }
-        printdebugln("Loaded "+wordsFilesLoaded+" Word files");
+        printDebugLn("Loaded "+wordsFilesLoaded+" Word files");
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
         confirm.setTitle("Word files loaded!");
         confirm.setHeaderText("Word files loaded!");
@@ -127,7 +127,7 @@ public class WindowCtl {
                 ioe.printStackTrace();
                 showErrorAlert(gridFile, ioe);
             }catch(InvalidGridFileException igfe) {
-                printdebugln(igfe);
+                printDebugLn(igfe);
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Error in Grid file");
                 alert.setHeaderText("Error in Grid file "+gridFile);
@@ -138,7 +138,7 @@ public class WindowCtl {
             }
         }
 
-        printdebugln("Loaded "+gridsLoaded+" Grid files");
+        printDebugLn("Loaded "+gridsLoaded+" Grid files");
 
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
         confirm.setTitle("Grid files loaded!");
@@ -164,7 +164,7 @@ public class WindowCtl {
             ioe.printStackTrace();
             showErrorAlert(selectedQuestionFile, ioe);
         }catch(InvalidQuestionFileException iqfe) {
-            printdebugln(iqfe);
+            printDebugLn(iqfe);
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error in Question file");
             alert.setHeaderText("Error in Question file "+selectedQuestionFile);
@@ -173,7 +173,7 @@ public class WindowCtl {
             System.err.println("Invalid Question file "+selectedQuestionFile);
             iqfe.printStackTrace();
         }
-        printdebugln("Loaded Question file "+selectedQuestionFile);
+        printDebugLn("Loaded Question file "+selectedQuestionFile);
 
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
         confirm.setTitle("Question file loaded!");
@@ -184,7 +184,7 @@ public class WindowCtl {
 
     public void newGrid() {
         Game.getInstance().randomChangeCurrentGrid();
-        printdebugln(Game.getInstance().getCurrentGrid());
+        printDebugLn(Game.getInstance().getCurrentGrid());
     }
 
     public void newRandomGrid() {
@@ -194,17 +194,17 @@ public class WindowCtl {
         Game.getInstance().generateRandomCurrentGrid();
         root.setCursor(Cursor.DEFAULT);
         root.getCenter().setDisable(false);
-        printdebugln(Game.getInstance().getCurrentGrid());
+        printDebugLn(Game.getInstance().getCurrentGrid());
     }
 
     public void reset() {
         Game.getInstance().reset();
-        printdebugln("Reseting current grid");
-        printdebugln(Game.getInstance().getCurrentGrid());
+        printDebugLn("Reseting current grid");
+        printDebugLn(Game.getInstance().getCurrentGrid());
     }
 
     public void exit() {
-        printdebugln("Exiting");
+        printDebugLn("Exiting");
         Stage stage = (Stage) root.getScene().getWindow();
         stage.close();
 
@@ -213,7 +213,7 @@ public class WindowCtl {
 
     public void about() {
         String about = "This is a Java implementation of the TV French game Slam, made for a TELECOM Nancy 2A English project";
-        printdebugln(about);
+        printDebugLn(about);
         Dialog d = new Dialog();
         Window window = d.getDialogPane().getScene().getWindow();
         window.setOnCloseRequest(event -> window.hide());
