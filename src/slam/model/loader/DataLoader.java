@@ -38,7 +38,7 @@ public class DataLoader {
                     case 2:
                         try {
                             Word w1 = new Word(tabStrings[0], tabStrings[1], null);
-                            Game.getInstance().addWord(w1);
+                            Game.getInstance().addWord(path, w1);
                             loadedWords++;
                         } catch (WordException e) {
                             System.err.println("Tried to create an invalid content with Word(" + tabStrings[0] + ", " + tabStrings[1] + ", null)");
@@ -47,7 +47,7 @@ public class DataLoader {
                     case 3:
                         try {
                             Word w2 = new Word(tabStrings[0], tabStrings[1], tabStrings[2]);
-                            Game.getInstance().addWord(w2);
+                            Game.getInstance().addWord(path, w2);
                             loadedWords++;
                         } catch (WordException e) {
                             System.err.println("Tried to create an invalid content with Word(" + tabStrings[0] + ", " + tabStrings[1] + ", " + tabStrings[2] + ")");

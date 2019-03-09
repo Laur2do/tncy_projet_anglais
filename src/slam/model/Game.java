@@ -19,7 +19,7 @@ public class Game extends Observable {
 
     private static Game instance;
     private ArrayList<Grid> listOfGrids;
-    private HashMap<String, Word> words;
+    private HashMap<String, HashMap<String, Word>> words;
     private HashMap<Character, ArrayList<Question>> questions;
 
     private Grid currentGrid;
@@ -49,21 +49,33 @@ public class Game extends Observable {
         this.listOfGrids.add(grid);
     }
 
-    public void addWord(Word word) {
+    public void addWord(String type, Word word) {
         if (this.words.containsKey(word.getContent())) {
             System.err.println("Warning: adding word entry which is already present. Overriding previous entry.");
             System.err.println("\t new: " + word.getDescription());
             System.err.println("\t old: " + this.words.get(word.getContent()));
         }
-        this.words.put(word.getContent(), word);
+        if( !  this.words.containsKey(type)) {
+            this.words.put(type, new HashMap<>());
+        }
+        this.words.get(type).put(word.getContent(), word);
     }
+
 
     public void addQuestion(Question question) {
         questions.get(question.getLetter()).add(question);
     }
 
     public HashMap<String, Word> getWords() {
-        return words;
+        HashMap<String, Word> allWords = new HashMap<>();
+        for(HashMap<String, Word> words : this.words.values()) {
+            allWords.putAll(words);
+        }
+        return allWords;
+    }
+
+    public HashMap<String, Word> getWords(String type) {
+        return words.get(type);
     }
 
     public int loadWords(String filePath) throws InvalidWordFileException {
@@ -89,6 +101,9 @@ public class Game extends Observable {
 
 
     public Grid randomChangeCurrentGrid() {
+        if( this.listOfGrids.isEmpty() ) {
+            return null;
+        }
         printdebugln("Loading new grid");
         int index = (int) (Math.random() * this.listOfGrids.size());
         this.currentGrid = this.listOfGrids.get(index);

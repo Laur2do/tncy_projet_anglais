@@ -32,8 +32,6 @@ public class GridCtl implements Observer {
     public GridCtl(GridPane gridPane) {
         this.gridPane = gridPane;
         Game.getInstance().addObserver(this);
-        Game.getInstance().randomChangeCurrentGrid();
-        System.out.println(Game.getInstance().getCurrentGrid());
 
         BorderPane centerBorderPane = ((BorderPane) this.gridPane.getParent());
         this.questionPane = centerBorderPane.getBottom();

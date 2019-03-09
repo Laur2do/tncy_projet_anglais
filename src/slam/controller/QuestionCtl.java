@@ -52,16 +52,24 @@ public class QuestionCtl implements Observer {
     }
 
     public void setNewQuestion() {
+        if( Game.getInstance().getCurrentGrid() == null) {
+            this.messageLabel.setText("Please load data");
+            this.questionPane.setVisible(true);
+            this.question.setVisible(false);
+            this.answer.setVisible(false);
+
+            return;
+        }
+
+        this.question.setVisible(true);
+        this.answer.setVisible(true);
+        this.answer.setText("");
+        this.messageLabel.setText("");
+
         this.currentQuestion = Game.getInstance().getCurrentGrid().getRandomQuestionForRemainingLetters();
         if (this.currentQuestion != null) {
             this.question.setText(this.currentQuestion.getQuestion());
-            this.questionPane.setVisible(true);
-            this.answer.setVisible(true);
             printdebugln(this.currentQuestion.getQuestion());
-        } else {
-            this.answer.setText("");
-            this.messageLabel.setText("");
-            this.questionPane.setVisible(false);
         }
     }
 

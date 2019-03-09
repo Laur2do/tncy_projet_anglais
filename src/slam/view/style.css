@@ -18,7 +18,7 @@
 }
 
 .grid {
-    -fx-background-color: #F7F1C0;
+    -fx-background-color: transparent;
 }
 
 .answer-input {

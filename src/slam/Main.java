@@ -9,18 +9,10 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import slam.controller.GridCtl;
 import slam.controller.QuestionCtl;
-import slam.model.Game;
-import slam.model.Word;
-import slam.model.loader.InvalidGridFileException;
-import slam.model.loader.InvalidQuestionFileException;
-import slam.model.loader.InvalidWordFileException;
-
-import java.io.IOException;
-import java.util.HashMap;
 
 public class Main extends Application {
 
-    private final static boolean DEBUG = true;
+    private final static boolean DEBUG = false;
     public final static String TITLE = "Grand Chelem";
 
     public static void printdebugln(Object obj) {
@@ -29,34 +21,8 @@ public class Main extends Application {
         }
     }
 
-    private void loadGameData() {
-        Game game = Game.getInstance();
-        try {
-            int loadedWords = game.loadWords("data/words.csv");
-            int gridLoaded = game.loadGrids("data/grids");
-            int questionsLoaded = game.loadQuestions("data/questions.csv");
-
-            if (DEBUG) {
-                System.out.println("Loaded " + loadedWords + " words");
-                System.out.println("================================");
-                HashMap<String, Word> words = game.getWords();
-                for (Word w : words.values()) {
-                    System.out.println(w.getDescription());
-                }
-                System.out.println("================================");
-                System.out.println("Loaded " + questionsLoaded + " questions");
-                System.out.println("Loaded " + gridLoaded + " grids");
-            }
-
-        } catch (InvalidWordFileException | InvalidGridFileException | InvalidQuestionFileException | IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     @Override
     public void start(Stage primaryStage) throws Exception {
-        // Load model's data
-        loadGameData();
 
         // Load Window (root)
         BorderPane rootPane = FXMLLoader.load(getClass().getResource("view/Window.fxml"));
@@ -90,12 +56,11 @@ public class Main extends Application {
         centerBorderPane.setBottom(questionPane);
 
         GridCtl gridCtl = new GridCtl(gridPane);
-        gridCtl.updateGridPane();
+        //gridCtl.updateGridPane();
 
         QuestionCtl questionCtl = new QuestionCtl(gridCtl, questionPane);
         questionCtl.setNewQuestion();
     }
-
 
     public static void main(String[] args) {
         launch(args);
