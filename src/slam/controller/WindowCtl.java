@@ -18,6 +18,7 @@ import slam.model.loader.InvalidWordFileException;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -35,9 +36,16 @@ public class WindowCtl {
     private void showErrorAlert(File f, Exception e) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Error reading file");
-        alert.setHeaderText("Error reading file "+f);
+        alert.setHeaderText("Error reading file " + f);
         alert.setContentText(e.getMessage());
         alert.showAndWait();
+    }
+
+    private static String listToPrettyString(List l) {
+        String filesList = l.toString();
+        filesList = filesList.substring(1, filesList.length()-1);
+        filesList = "\t- "+filesList.replaceAll(", ", ",\n\t- ");
+        return filesList;
     }
 
     public void fileLoadDefaultData() {
@@ -45,7 +53,7 @@ public class WindowCtl {
             int loadedWords = Game.getInstance().loadWords("data/words.csv");
             int loadedGrids = Game.getInstance().loadGrids("data/grids");
             int loadedQuestions = Game.getInstance().loadQuestions("data/questions.csv");
-            
+
             printDebugLn("Loaded " + loadedWords + " words");
             printDebugLn("================================");
             HashMap<String, Word> words = Game.getInstance().getWords();
@@ -59,10 +67,10 @@ public class WindowCtl {
             Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
             confirm.setTitle("Default data files loaded!");
             confirm.setHeaderText("Default data files loaded!");
-            confirm.setContentText("Default data files have been loaded successfully:\n"+loadedWords+" words\n"+loadedQuestions+" questions\n"+loadedGrids+" grids are now available.");
+            confirm.setContentText("Default data files have been loaded successfully:\n" + loadedWords + " words\n" + loadedQuestions + " questions\n" + loadedGrids + " grids are now available.");
             confirm.showAndWait();
-            
-        }catch(IOException | InvalidGridFileException | InvalidWordFileException | InvalidQuestionFileException e) {
+
+        } catch (IOException | InvalidGridFileException | InvalidWordFileException | InvalidQuestionFileException e) {
             System.err.println("System error while loading default files.");
             e.printStackTrace();
             showErrorAlert(new File("data"), e);
@@ -76,35 +84,42 @@ public class WindowCtl {
         fc.setInitialDirectory(new File("data"));
         fc.setTitle("Choose a Word file (.CSV)");
         List<File> selectedWordFiles = fc.showOpenMultipleDialog(root.getScene().getWindow());
-        if( selectedWordFiles == null) {
+        if (selectedWordFiles == null) {
             return;
         }
-        int wordsFilesLoaded = 0;
-        for(File wordFile : selectedWordFiles) {
+
+        ArrayList<File> loadedWordFiles = new ArrayList<>();
+        int wordsLoaded = 0;
+        for (File wordFile : selectedWordFiles) {
             try {
-                DataLoader.loadWordFile(wordFile.getCanonicalPath());
-                wordsFilesLoaded++;
-            }catch(IOException ioe) {
-                System.err.println("System error while loading Word file "+wordFile);
+                wordsLoaded += DataLoader.loadWordFile(wordFile.getCanonicalPath());
+                loadedWordFiles.add(wordFile);
+            } catch (IOException ioe) {
+                System.err.println("System error while loading Word file " + wordFile);
                 ioe.printStackTrace();
                 showErrorAlert(wordFile, ioe);
-            }catch(InvalidWordFileException iwfe) {
+            } catch (InvalidWordFileException iwfe) {
                 printDebugLn(iwfe);
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Error in Word file");
-                alert.setHeaderText("Error in Word file "+wordFile);
+                alert.setHeaderText("Error in Word file " + wordFile);
                 alert.setContentText(iwfe.getMessage());
                 alert.showAndWait();
-                System.err.println("Invalid Grid file "+wordFile);
+                System.err.println("Invalid Grid file " + wordFile);
                 iwfe.printStackTrace();
             }
         }
-        printDebugLn("Loaded "+wordsFilesLoaded+" Word files");
-        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
-        confirm.setTitle("Word files loaded!");
-        confirm.setHeaderText("Word files loaded!");
-        confirm.setContentText("The following Word files have been loaded successfully: "+selectedWordFiles);
-        confirm.showAndWait();
+
+        printDebugLn("Loaded " + loadedWordFiles.size() + " Word file(s: " + loadedWordFiles);
+
+        if (loadedWordFiles.size() > 0) {
+            Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+            confirm.setTitle("Word file(s) loaded!");
+            confirm.setHeaderText("Word file(s) loaded!");
+
+            confirm.setContentText(wordsLoaded + " words from the " + loadedWordFiles.size() + " Word file(s) \n" + listToPrettyString(loadedWordFiles) + "\n have been loaded successfully!");
+            confirm.showAndWait();
+        }
     }
 
     public void fileLoadGrid() {
@@ -114,37 +129,40 @@ public class WindowCtl {
         fc.setInitialDirectory(new File("data/grids"));
         fc.setTitle("Choose a Grid file (.CSV)");
         List<File> selectedGridFiles = fc.showOpenMultipleDialog(root.getScene().getWindow());
-        if( selectedGridFiles == null) {
+        if (selectedGridFiles == null) {
             return;
         }
-        int gridsLoaded = 0;
-        for(File gridFile : selectedGridFiles) {
+
+        ArrayList<File> loadedGridFiles = new ArrayList<>();
+        for (File gridFile : selectedGridFiles) {
             try {
                 DataLoader.loadGridFile(gridFile.getCanonicalPath());
-                gridsLoaded++;
-            }catch(IOException ioe) {
-                System.err.println("System error while loading Grid file "+gridFile);
+                loadedGridFiles.add(gridFile);
+            } catch (IOException ioe) {
+                System.err.println("System error while loading Grid file " + gridFile);
                 ioe.printStackTrace();
                 showErrorAlert(gridFile, ioe);
-            }catch(InvalidGridFileException igfe) {
+            } catch (InvalidGridFileException igfe) {
                 printDebugLn(igfe);
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Error in Grid file");
-                alert.setHeaderText("Error in Grid file "+gridFile);
+                alert.setHeaderText("Error in Grid file " + gridFile);
                 alert.setContentText(igfe.getMessage());
                 alert.showAndWait();
-                System.err.println("Invalid Grid file "+gridFile);
+                System.err.println("Invalid Grid file " + gridFile);
                 igfe.printStackTrace();
             }
         }
 
-        printDebugLn("Loaded "+gridsLoaded+" Grid files");
+        printDebugLn("Loaded " + loadedGridFiles.size() + " Grid file(s): " + loadedGridFiles);
 
-        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
-        confirm.setTitle("Grid files loaded!");
-        confirm.setHeaderText("Grid files loaded!");
-        confirm.setContentText("The following Grid files have been loaded successfully: "+selectedGridFiles);
-        confirm.showAndWait();
+        if (loadedGridFiles.size() > 0) {
+            Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+            confirm.setTitle("Grid file(s) loaded!");
+            confirm.setHeaderText("Grid file(s) loaded!");
+            confirm.setContentText(loadedGridFiles.size() + " from the " + loadedGridFiles.size() + " Grid file(s) \n" + listToPrettyString(loadedGridFiles) + "\n have been loaded successfully!");
+            confirm.showAndWait();
+        }
     }
 
     public void fileLoadQuestions() {
@@ -153,33 +171,41 @@ public class WindowCtl {
         fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Any", "*.*"));
         fc.setInitialDirectory(new File("data"));
         fc.setTitle("Choose a Question file (.CSV)");
-        File selectedQuestionFile = fc.showOpenDialog(root.getScene().getWindow());
-        if( selectedQuestionFile == null) {
+        List<File> selectedQuestionFiles = fc.showOpenMultipleDialog(root.getScene().getWindow());
+        if (selectedQuestionFiles == null) {
             return;
         }
-        try {
-            DataLoader.loadQuestionFile(selectedQuestionFile.getCanonicalPath());
-        }catch(IOException ioe) {
-            System.err.println("System error while loading Question file "+selectedQuestionFile);
-            ioe.printStackTrace();
-            showErrorAlert(selectedQuestionFile, ioe);
-        }catch(InvalidQuestionFileException iqfe) {
-            printDebugLn(iqfe);
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error in Question file");
-            alert.setHeaderText("Error in Question file "+selectedQuestionFile);
-            alert.setContentText(iqfe.getMessage());
-            alert.showAndWait();
-            System.err.println("Invalid Question file "+selectedQuestionFile);
-            iqfe.printStackTrace();
-        }
-        printDebugLn("Loaded Question file "+selectedQuestionFile);
 
-        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
-        confirm.setTitle("Question file loaded!");
-        confirm.setHeaderText("Question file loaded!");
-        confirm.setContentText("The following Question file has been loaded successfully: "+selectedQuestionFile);
-        confirm.showAndWait();
+        ArrayList<File> loadedQuestionFiles = new ArrayList<>();
+        int loadedQuestions = 0;
+        for (File questionFile : selectedQuestionFiles) {
+            try {
+                loadedQuestions += DataLoader.loadQuestionFile(questionFile.getCanonicalPath());
+                loadedQuestionFiles.add(questionFile);
+            } catch (IOException ioe) {
+                System.err.println("System error while loading Question file " + questionFile);
+                ioe.printStackTrace();
+                showErrorAlert(questionFile, ioe);
+            } catch (InvalidQuestionFileException iqfe) {
+                printDebugLn(iqfe);
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error in Question file");
+                alert.setHeaderText("Error in Question file " + questionFile);
+                alert.setContentText(iqfe.getMessage());
+                alert.showAndWait();
+                System.err.println("Invalid Question file " + questionFile);
+                iqfe.printStackTrace();
+            }
+        }
+        printDebugLn("Loaded " + loadedQuestions + " questions from " + loadedQuestionFiles.size() + " Question file(s): " + loadedQuestionFiles);
+
+        if (loadedQuestionFiles.size() > 0) {
+            Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+            confirm.setTitle("Question file(s) loaded!");
+            confirm.setHeaderText("Question file(s) loaded!");
+            confirm.setContentText(loadedQuestions + " questions from the "+loadedQuestionFiles.size()+" Question file(s) \n" + listToPrettyString(loadedQuestionFiles) + "\n have been loaded successfully!");
+            confirm.showAndWait();
+        }
     }
 
     public void newGrid() {
@@ -217,7 +243,7 @@ public class WindowCtl {
         Dialog d = new Dialog();
         Window window = d.getDialogPane().getScene().getWindow();
         window.setOnCloseRequest(event -> window.hide());
-        d.setTitle("About "+ Main.TITLE);
+        d.setTitle("About " + Main.TITLE);
         d.setHeaderText(d.getTitle());
         d.setContentText(about);
         d.show();
