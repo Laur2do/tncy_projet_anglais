@@ -48,12 +48,15 @@ public class GuessWordCtl {
         this.answer.setTextFormatter(new TextFormatter(modifyChange));
     }
 
-    public void validate() {
+    public boolean validate() {
         if (this.gridWord.getContent().equals(this.answer.getText().toUpperCase())) {
             printDebugLn("> " + this.answer.getText() + "\nCorrect!");
             this.gridWord.reveal();
+            return true;
         } else {
+            this.gridWord.setAlreadyGuessed();
             printDebugLn("> " + this.answer.getText() + "\nIncorrect!");
+            return false;
         }
     }
 }

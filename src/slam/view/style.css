@@ -1,12 +1,24 @@
 .cell {
     -fx-background-radius: 3px;
-    -fx-background-color: #3D6CF7;
+    -fx-background-color: #ABA77F;
     -fx-alignment: center;
     -fx-font-weight: bold;
     -fx-pref-width: 30px;
-    -fx-text-fill: white;
     -fx-font-size: 20px;
 }
+.cell-enabled {
+    -fx-background-color: #FFE14B;
+}
+
+.cell-revealed {
+    -fx-background-color: white;
+    -fx-text-fill: #3D6CF7;
+}
+
+.cell-guessed {
+    -fx-background-color: #d0d0d0;
+}
+
 .cell-hover {
     -fx-background-color: #0951C5;
     -fx-text-fill: #FFDD00;

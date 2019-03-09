@@ -56,7 +56,6 @@ public class GridCtl implements Observer {
             GuessWordCtl ctl = popupFXML.getController();
             ctl.setGridWord(gw);
 
-
             BorderPane centerBorderPane = ((BorderPane) this.gridPane.getParent());
             this.questionPane = centerBorderPane.getBottom();
             centerBorderPane.setBottom(guessWordDialogContent);
@@ -64,10 +63,14 @@ public class GridCtl implements Observer {
             TextField answer = (TextField) guessWordDialogContent.lookup("#answer");
             answer.setOnAction(event -> {
                 ctl.validate();
+
                 this.updateGridPane();
                 centerBorderPane.setBottom(this.questionPane);
                 l.execute();
                 this.setEnableGuess(false, this.questionCtl);
+                for (Node n : this.gridPane.getChildren()) {
+                    n.getStyleClass().remove("cell-enabled");
+                }
                 if (Game.getInstance().getCurrentGrid().isRevealed()) {
                     this.questionCtl.showCongratulations();
                 } else {
@@ -137,16 +140,33 @@ public class GridCtl implements Observer {
                 cellLabels[index] = cellLabel;
 
                 cellLabel.getStyleClass().add("cell");
+                if( revealed[index] ) {
+                    cellLabel.getStyleClass().add("cell-revealed");
+                }
                 cellLabel.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> {
-                    for (Label label : cellLabels) {
-                        label.getStyleClass().add("cell-hover");
+                    if (this.canGuessWord) {
+                        for (Label label : cellLabels) {
+                            label.getStyleClass().add("cell-hover");
+                        }
                     }
                 });
                 cellLabel.addEventHandler(MouseEvent.MOUSE_EXITED, e -> {
-                    for (Label label : cellLabels) {
-                        label.getStyleClass().remove("cell-hover");
+                    if (this.canGuessWord) {
+                        for (Label label : cellLabels) {
+                            label.getStyleClass().remove("cell-hover");
+                        }
                     }
                 });
+                if(!gw.isRevealed() && gw.isAlreadyGuessed()) {
+                    cellLabel.getStyleClass().add("cell-guessed");
+                } else if (gw.isRevealed()){
+                    cellLabel.getStyleClass().remove("cell-guessed");
+                }
+            }
+        }
+        if (this.canGuessWord) {
+            for (Node n : this.gridPane.getChildren()) {
+                n.getStyleClass().add("cell-enabled");
             }
         }
     }

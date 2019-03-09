@@ -6,6 +6,7 @@ public class GridWord extends Word {
 
     private final Orientation orientation;
     private final boolean[] revealedLetters;
+    private boolean alreadyGuessed;
 
     private final int firstCharX;
     private final int firstCharY;
@@ -18,6 +19,14 @@ public class GridWord extends Word {
 
         this.revealedLetters = new boolean[this.length];
         Arrays.fill(this.revealedLetters, false);
+    }
+
+    public boolean isAlreadyGuessed() {
+        return alreadyGuessed;
+    }
+
+    public void setAlreadyGuessed() {
+        this.alreadyGuessed = true;
     }
 
     public Orientation getOrientation() {
