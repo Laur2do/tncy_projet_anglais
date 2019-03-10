@@ -18,7 +18,7 @@ public class DataLoader {
      * @throws InvalidWordFileException When the file is incorrect
      */
     public static int loadWordFile(String path) throws InvalidWordFileException {
-        int lineNumber = 0;
+        int lineNumber = 1;
         int loadedWords = 0;
         try {
             BufferedReader source_file = new BufferedReader(new FileReader(path));
@@ -29,6 +29,9 @@ public class DataLoader {
 
             while ((line = source_file.readLine()) != null) {
                 lineNumber++;
+                if( line.isEmpty()) {
+                    continue;
+                }
 
                 String[] tabStrings = line.split(",");
                 switch (tabStrings.length) {
@@ -78,7 +81,6 @@ public class DataLoader {
         try {
             BufferedReader source_file = new BufferedReader(new FileReader(path));
             String line;
-            int lineNumber = 0;
 
             //The first line contains the header and the grid dimensions
             String[] info = source_file.readLine().split(",");
@@ -88,8 +90,12 @@ public class DataLoader {
                 grid = new Grid();
             }
 
+            int lineNumber = 1;
             while ((line = source_file.readLine()) != null) {
                 lineNumber++;
+                if( line.isEmpty()) {
+                    continue;
+                }
 
                 String[] tabStrings = line.split(",");
 
@@ -141,7 +147,7 @@ public class DataLoader {
      * @throws InvalidQuestionFileException When the file is incorrect
      */
     public static int loadQuestionFile(String path) throws InvalidQuestionFileException {
-        int lineNumber = 0;
+        int lineNumber = 1;
         try {
             BufferedReader source_file = new BufferedReader(new FileReader(path));
             String line;
@@ -151,6 +157,9 @@ public class DataLoader {
 
             while ((line = source_file.readLine()) != null) {
                 lineNumber++;
+                if( line.isEmpty()) {
+                    continue;
+                }
 
                 String[] tabStrings = line.split(",");
 

@@ -11,7 +11,7 @@ public class Grid {
     /**
      * The maximal number of words expected in a generated grid
      */
-    private static final int MAX_WORDS_COUNT = 10;
+    private static final int MAX_WORDS_COUNT = 8;
 
     /**
      * The minimal number of words expected in a generated grid.
@@ -94,7 +94,9 @@ public class Grid {
                         sb.append(grid[j][i].toString());
                     }
                 }
-                sb.append(' ');
+                for(int padding=j+1; padding > 0; padding/=10) {
+                    sb.append(" ");
+                }
             }
             sb.append('\n');
         }
@@ -263,7 +265,7 @@ public class Grid {
      */
     private void resetGridToFitWords() {
         int maxLength = getLongestWord().getLength();
-        maxLength *= 2;
+        maxLength *= 3;
         this.grid = new Cell[maxLength][maxLength];
     }
 
@@ -472,12 +474,14 @@ public class Grid {
                 // Handle other wordsToPlace);
                 if (!placeNextWords()) {
                     this.placedWords = new HashMap<>();
+                    this.wordsToPlace.clear();
                     wordsList = new ArrayList<>(Game.getInstance().getWords().values());
                     for (int i = 0; i < Grid.MAX_WORDS_COUNT && wordsList.size() > 0; i++) {
                         int randomIndex = (int) (Math.random() * wordsList.size());
                         Word w = wordsList.remove(randomIndex);
                         this.wordsToPlace.add(w);
                     }
+                    longestWord = getLongestWord();
 
                     this.grid = backupGrid;
                     printDebugLn("\t First word unplaced");

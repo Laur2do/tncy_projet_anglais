@@ -4,8 +4,8 @@ import java.util.Observable;
 import java.util.Observer;
 
 public class Cell implements Observer {
-    public static final char NO_LETTER_CHAR = '#';
-    public static final char NOT_REVEALED_LETTER_CHAR = ' ';
+    public static final char NO_LETTER_CHAR = ' ';
+    public static final char NOT_REVEALED_LETTER_CHAR = '*';
 
     private final int wordIndex;
     private final GridWord word;
