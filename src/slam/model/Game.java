@@ -107,7 +107,6 @@ public class Game extends Observable {
         printDebugLn("Loading new grid");
         int index = (int) (Math.random() * this.listOfGrids.size());
         this.currentGrid = this.listOfGrids.get(index);
-        setChanged();
         notifyObservers();
         return currentGrid;
     }
@@ -116,13 +115,15 @@ public class Game extends Observable {
         printDebugLn("Computing new grid");
         this.currentGrid = new Grid();
         this.currentGrid.compute();
+    }
+
+    public void notifyObservers() {
         setChanged();
-        notifyObservers();
+        super.notifyObservers();
     }
 
     public void reset() {
         this.currentGrid.reset();
-        setChanged();
         notifyObservers();
     }
 

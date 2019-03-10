@@ -11,12 +11,11 @@ public class Grid {
     /**
      * The maximal number of words expected in a generated grid
      */
-    private static final int MAX_WORDS_COUNT = 8;
+    private static final int MAX_WORDS_COUNT = 6;
 
     /**
      * The minimal number of words expected in a generated grid.
      * Algorithm will retry to place words randomly until this is matched.
-     * TODO: adjust it according to the available words
      */
     private static final int MIN_WORDS_COUNT = 4;
 
@@ -94,7 +93,7 @@ public class Grid {
                         sb.append(grid[j][i].toString());
                     }
                 }
-                for(int padding=j+1; padding > 0; padding/=10) {
+                for (int padding = j + 1; padding > 0; padding /= 10) {
                     sb.append(" ");
                 }
             }
@@ -129,7 +128,7 @@ public class Grid {
             }
         }
         if (remainingLetters.isEmpty()) {
-            if( ! this.isRevealed()) {
+            if (!this.isRevealed()) {
                 // Incoherent state: no question found but grid is not revealed
                 System.err.println("No remaining unrevealed letter found for grid");
                 System.err.println(gridToString(false));
@@ -506,6 +505,11 @@ public class Grid {
             // We don't have a word next to another one, in the same direction
             for (GridWord gw : this.placedWords.values()) {
                 if (gw.getOrientation() == Orientation.HORIZONTAL) {
+                    if (gw.getX() > 0 && this.grid[gw.getX() - 1][gw.getY()] != null ||
+                            gw.getX() + gw.getLength() < this.w() && this.grid[gw.getX() + gw.getLength()][gw.getY()] != null) {
+                        incorrect = true;
+                        break;
+                    }
                     for (int i = gw.getX(); i < gw.getLength() + gw.getX() && i < w(); i++) {
                         if (gw.getY() > 0 && this.grid[i][gw.getY() - 1] != null) {
                             if (this.grid[i][gw.getY() - 1].getWord().getOrientation() == Orientation.HORIZONTAL) {
@@ -520,7 +524,15 @@ public class Grid {
                             }
                         }
                     }
+                    if (incorrect) {
+                        break;
+                    }
                 } else {
+                    if (gw.getY() > 0 && this.grid[gw.getX()][gw.getY() - 1] != null ||
+                            gw.getY() + gw.getLength() < this.h() && this.grid[gw.getX()][gw.getY() + gw.getLength()] != null) {
+                        incorrect = true;
+                        break;
+                    }
                     for (int j = gw.getY(); j < gw.getLength() + gw.getY() && j < h(); j++) {
                         if (gw.getX() > 0 && this.grid[gw.getX() - 1][j] != null) {
                             if (this.grid[gw.getX() - 1][j].getWord().getOrientation() == Orientation.VERTICAL) {
@@ -534,6 +546,9 @@ public class Grid {
                                 break;
                             }
                         }
+                    }
+                    if (incorrect) {
+                        break;
                     }
                 }
             }
