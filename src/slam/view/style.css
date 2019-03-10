@@ -1,3 +1,11 @@
+.body {
+    -fx-background-color: #D6E6FF;
+}
+
+.grid {
+    -fx-background-color: transparent;
+}
+
 .cell {
     -fx-background-radius: 3px;
     -fx-background-color: #ABA77F;
@@ -7,7 +15,7 @@
     -fx-font-size: 20px;
 }
 .cell-enabled {
-    -fx-background-color: #FFE14B;
+    -fx-background-color: #FFBF00;
 }
 
 .cell-revealed {
@@ -21,16 +29,12 @@
 
 .cell-hover {
     -fx-background-color: #0951C5;
-    -fx-text-fill: #FFDD00;
+    -fx-text-fill: #FFBF00;
 }
 
 .cell-focus {
     -fx-background-color: #FF9C3F;
     -fx-text-fill: #0951C5;
-}
-
-.grid {
-    -fx-background-color: transparent;
 }
 
 .answer-input {

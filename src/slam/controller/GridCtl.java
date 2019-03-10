@@ -118,6 +118,7 @@ public class GridCtl implements Observer {
                     this.gridPane.add(cellLabel, x, y);
                     cellLabel.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
                         if (this.canGuessWord && !gw.isRevealed()) {
+                            this.canGuessWord = false;
                             showGuessWord(gw, () -> {
                                 printDebugLn(currentGrid.toString());
                                 for (Label label : cellLabels) {
