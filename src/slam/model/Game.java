@@ -31,7 +31,6 @@ public class Game extends Observable {
         for (char letter = 'A'; letter <= 'Z'; letter++) {
             this.questions.put(letter, new ArrayList<>());
         }
-
     }
 
     public static Game getInstance() {
@@ -39,6 +38,23 @@ public class Game extends Observable {
             instance = new Game();
         }
         return instance;
+    }
+
+    public boolean canStart() {
+        int questionCount = 0;
+        for(ArrayList<Question> questionsDesk : this.questions.values()) {
+            if( questionsDesk.size() == 0) {
+                return false;
+            }
+            questionCount += questionsDesk.size();
+        }
+
+        int wordCount = 0;
+        for(HashMap<String, Word> wordsDeck : this.words.values()) {
+            wordCount +=wordsDeck.size();
+        }
+
+        return wordCount >= Grid.MIN_WORDS_COUNT && questionCount > 0;
     }
 
     public ArrayList<Grid> getListOfGrids() {

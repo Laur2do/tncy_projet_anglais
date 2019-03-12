@@ -140,34 +140,34 @@ public class GridCtl implements Observer {
                 }
                 cellLabels[index] = cellLabel;
 
-                cellLabel.getStyleClass().add("cell");
+                cellLabel.getStyleClass().add("grid-cell");
                 if( revealed[index] ) {
-                    cellLabel.getStyleClass().add("cell-revealed");
+                    cellLabel.getStyleClass().add("grid-cell-revealed");
                 }
                 cellLabel.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> {
                     if (this.canGuessWord) {
                         for (Label label : cellLabels) {
-                            label.getStyleClass().add("cell-hover");
+                            label.getStyleClass().add("grid-cell-hover");
                         }
                     }
                 });
                 cellLabel.addEventHandler(MouseEvent.MOUSE_EXITED, e -> {
                     if (this.canGuessWord) {
                         for (Label label : cellLabels) {
-                            label.getStyleClass().remove("cell-hover");
+                            label.getStyleClass().remove("grid-cell-hover");
                         }
                     }
                 });
                 if(!gw.isRevealed() && gw.isAlreadyGuessed()) {
-                    cellLabel.getStyleClass().add("cell-guessed");
+                    cellLabel.getStyleClass().add("grid-cell-guessed");
                 } else if (gw.isRevealed()){
-                    cellLabel.getStyleClass().remove("cell-guessed");
+                    cellLabel.getStyleClass().remove("grid-cell-guessed");
                 }
             }
         }
         if (this.canGuessWord) {
             for (Node n : this.gridPane.getChildren()) {
-                n.getStyleClass().add("cell-enabled");
+                n.getStyleClass().add("grid-cell-enabled");
             }
         }
     }

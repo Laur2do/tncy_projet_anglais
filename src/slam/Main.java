@@ -4,11 +4,9 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import slam.controller.GridCtl;
-import slam.controller.QuestionCtl;
+import slam.controller.WelcomeCtl;
 
 public class Main extends Application {
 
@@ -38,28 +36,26 @@ public class Main extends Application {
         // Load the center
         BorderPane centerBorderPane = (BorderPane) rootPane.lookup("#centerBorderPane");
 
-        // Load the grid
-        FXMLLoader gridFXML = new FXMLLoader();
-        gridFXML.setLocation(getClass().getResource("view/Grid.fxml"));
-        GridPane gridPane = gridFXML.load();
+        // Load the welcome page
+        FXMLLoader welcomeFXML = new FXMLLoader();
+        welcomeFXML.setLocation(getClass().getResource("view/Welcome.fxml"));
+        BorderPane welcome = welcomeFXML.load();
 
         // Load the question pane
         FXMLLoader questionFXML = new FXMLLoader();
         questionFXML.setLocation(getClass().getResource("view/Question.fxml"));
         VBox questionPane = questionFXML.load();
+        questionPane.setVisible(false);
 
-
-        // Assemble grid & root's center pane
-        centerBorderPane.setCenter(gridPane);
+        // Assemble welcome pane & root's center pane
+        centerBorderPane.setCenter(welcome);
 
         // Assemble grid & root
         centerBorderPane.setBottom(questionPane);
 
-        GridCtl gridCtl = new GridCtl(gridPane);
-        //gridCtl.updateGridPane();
 
-        QuestionCtl questionCtl = new QuestionCtl(gridCtl, questionPane);
-        questionCtl.setNewQuestion();
+        WelcomeCtl welcomeCtl = welcomeFXML.getController();
+        welcomeCtl.setPanes(centerBorderPane, questionPane);
     }
 
     public static void main(String[] args) {

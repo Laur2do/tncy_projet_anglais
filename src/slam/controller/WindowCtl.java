@@ -3,15 +3,18 @@ package slam.controller;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
+import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Dialog;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import javafx.util.Callback;
 import javafx.util.Pair;
 import slam.Main;
 import slam.model.Game;
+import slam.model.Grid;
 import slam.model.loader.DataLoader;
 import slam.model.loader.InvalidGridFileException;
 import slam.model.loader.InvalidQuestionFileException;
@@ -20,10 +23,7 @@ import slam.model.loader.InvalidWordFileException;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 import static slam.Main.printDebugLn;
 
@@ -33,10 +33,18 @@ public class WindowCtl {
     @FXML
     private BorderPane root;
 
+    public static final FilenameFilter CSVFileFilter = (File current, String name) -> {
+        if (!name.endsWith(".csv")) {
+            return false;
+        }
+        File f = new File(current, name);
+        return !f.isDirectory() && f.canRead();
+    };
+
     public WindowCtl() {
     }
 
-    private void showErrorAlert(File f, Exception e) {
+    public  static void showErrorAlert(File f, Exception e) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Error reading file");
         alert.setHeaderText("Error reading file " + f);
@@ -44,7 +52,7 @@ public class WindowCtl {
         alert.showAndWait();
     }
 
-    private static String listToPrettyString(Collection l) {
+    public static String listToPrettyString(Collection l) {
         String filesList = l.toString();
         filesList = filesList.substring(1, filesList.length() - 1);
         filesList = "\t- " + filesList.replaceAll(", ", ",\n\t- ");
@@ -52,22 +60,15 @@ public class WindowCtl {
     }
 
     public void fileLoadDefaultData() {
-        int loadedGrids = 0, loadedQuestions = 0, loadedWords = 0;
-
-        FilenameFilter CSVFileFilter = (File current, String name) -> {
-            if (!name.endsWith(".csv")) {
-                return false;
-            }
-            File f = new File(current, name);
-            return !f.isDirectory() && f.canRead();
-        };
+        int loadedGrids, loadedQuestions, loadedWords;
 
         File wordsDir = new File("data/words");
         File[] wordsFile = wordsDir.listFiles(CSVFileFilter);
         if (wordsFile == null) {
             showErrorAlert(wordsDir, new IOException("Can't read directory!"));
+            loadedWords = 0;
         } else {
-            loadedWords = this.loadWords(Arrays.asList(wordsFile)).getKey();
+            loadedWords = loadWords(Arrays.asList(wordsFile)).getKey();
         }
 
         File gridsDir = new File("data/grids");
@@ -75,17 +76,12 @@ public class WindowCtl {
         File[] gridsFile = gridsDir.listFiles(CSVFileFilter);
         if (gridsFile == null) {
             showErrorAlert(gridsDir, new IOException("Can't read directory!"));
+            loadedGrids = 0;
         } else {
             loadedGrids = this.loadGrids(Arrays.asList(gridsFile)).size();
         }
 
-        File questionsDir = new File("data/questions");
-        File[] questionsFiles = questionsDir.listFiles(CSVFileFilter);
-        if (questionsFiles == null) {
-            showErrorAlert(questionsDir, new IOException("Can't read directory!"));
-        } else {
-            loadedQuestions = this.loadQuestions(Arrays.asList(questionsFiles)).getKey();
-        }
+        loadedQuestions = loadAllDefaultQuestions().getKey();
 
         if (loadedGrids > 0 && loadedQuestions > 0 && loadedWords > 0) {
             Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
@@ -108,7 +104,7 @@ public class WindowCtl {
         }
     }
 
-    private Pair<Integer, Collection<File>> loadWords(Collection<File> wordFiles) {
+    public static Pair<Integer, Collection<File>> loadWords(Collection<File> wordFiles) {
         ArrayList<File> loadedWordFiles = new ArrayList<>();
         int wordsLoaded = 0;
         for (File wordFile : wordFiles) {
@@ -135,16 +131,17 @@ public class WindowCtl {
         return new Pair<>(wordsLoaded, loadedWordFiles);
     }
 
-    public void fileLoadWords() {
+    public static List<File> CSVFileSelector(Window window) {
         FileChooser fc = new FileChooser();
         fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Comma Separated files", "*.csv"));
         fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Any", "*.*"));
         fc.setInitialDirectory(new File("data/words"));
         fc.setTitle("Choose a Word file (.CSV)");
-        List<File> selectedWordFiles = fc.showOpenMultipleDialog(root.getScene().getWindow());
-        if (selectedWordFiles == null) {
-            return;
-        }
+        return fc.showOpenMultipleDialog(window);
+    }
+
+    public void fileLoadWords() {
+        List<File> selectedWordFiles = CSVFileSelector(root.getScene().getWindow());
 
         Pair<Integer, Collection<File>> loadedWords = loadWords(selectedWordFiles);
         int loadedFiles = loadedWords.getValue().size();
@@ -207,7 +204,18 @@ public class WindowCtl {
         }
     }
 
-    private Pair<Integer, Collection<File>> loadQuestions(Collection<File> questionFiles) {
+    public static Pair<Integer, Collection<File>> loadAllDefaultQuestions() {
+        File questionsDir = new File("data/questions");
+        File[] questionsFiles = questionsDir.listFiles(CSVFileFilter);
+        if (questionsFiles == null) {
+            showErrorAlert(questionsDir, new IOException("Can't read directory!"));
+            return new Pair<>(0, Collections.emptyList());
+        } else {
+            return loadQuestions(Arrays.asList(questionsFiles));
+        }
+    }
+
+    public static Pair<Integer, Collection<File>> loadQuestions(Collection<File> questionFiles) {
         ArrayList<File> loadedQuestionFiles = new ArrayList<>();
         int loadedQuestions = 0;
         for (File questionFile : questionFiles) {
@@ -261,19 +269,25 @@ public class WindowCtl {
         printDebugLn(Game.getInstance().getCurrentGrid());
     }
 
-    public void newRandomGrid() {
-        root.setCursor(Cursor.WAIT);
-        root.getCenter().setDisable(true);
+    public static void newRandomGrid(Node n, Callback<Grid, Void> cb) {
+        n.setCursor(Cursor.WAIT);
+        n.setDisable(true);
         new Thread(() -> {
             Game.getInstance().generateRandomCurrentGrid();
             printDebugLn(Game.getInstance().getCurrentGrid());
             Platform.runLater(() -> {
                 Game.getInstance().notifyObservers();
-                root.setCursor(Cursor.DEFAULT);
-                root.getCenter().setDisable(false);
+                n.setCursor(Cursor.DEFAULT);
+                n.setDisable(false);
+                if(cb != null) {
+                    cb.call(Game.getInstance().getCurrentGrid());
+                }
             });
-
         }).start();
+    }
+
+    public void newRandomGrid() {
+        newRandomGrid(root.getCenter(), null);
     }
 
     public void reset() {

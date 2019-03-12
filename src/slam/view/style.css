@@ -6,7 +6,7 @@
     -fx-background-color: transparent;
 }
 
-.cell {
+.grid-cell {
     -fx-background-radius: 3px;
     -fx-background-color: #ABA77F;
     -fx-alignment: center;
@@ -14,25 +14,25 @@
     -fx-pref-width: 30px;
     -fx-font-size: 20px;
 }
-.cell-enabled {
+.grid-cell-enabled {
     -fx-background-color: #FFBF00;
 }
 
-.cell-revealed {
+.grid-cell-revealed {
     -fx-background-color: white;
     -fx-text-fill: #3D6CF7;
 }
 
-.cell-guessed {
+.grid-cell-guessed {
     -fx-background-color: #d0d0d0;
 }
 
-.cell-hover {
+.grid-cell-hover {
     -fx-background-color: #0951C5;
     -fx-text-fill: #FFBF00;
 }
 
-.cell-focus {
+.grid-cell-focus {
     -fx-background-color: #FF9C3F;
     -fx-text-fill: #0951C5;
 }

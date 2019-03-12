@@ -2,7 +2,10 @@ package slam.model;
 
 import javafx.util.Pair;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 
 import static slam.Main.printDebugLn;
 
@@ -11,13 +14,13 @@ public class Grid {
     /**
      * The maximal number of words expected in a generated grid
      */
-    private static final int MAX_WORDS_COUNT = 6;
+    public static final int MAX_WORDS_COUNT = 6;
 
     /**
      * The minimal number of words expected in a generated grid.
      * Algorithm will retry to place words randomly until this is matched.
      */
-    private static final int MIN_WORDS_COUNT = 4;
+    public static final int MIN_WORDS_COUNT = 4;
 
     private static final int MAX_GRID_WIDTH = 50;
     private static final int MAX_GRID_HEIGHT = 50;
@@ -440,21 +443,26 @@ public class Grid {
         return true;
     }
 
+    private void clearPlacedWords() {
+        this.placedWords.clear();
+        this.wordsToPlace.clear();
+        ArrayList<Word> wordsList = new ArrayList<>(Game.getInstance().getWords().values());
+        for (int i = 0; i < Grid.MAX_WORDS_COUNT && wordsList.size() > 0; i++) {
+            int randomIndex = (int) (Math.random() * wordsList.size());
+            Word w = wordsList.remove(randomIndex);
+            this.wordsToPlace.add(w);
+        }
+    }
+
     public void compute() {
         boolean incorrect = true;
         while (incorrect) {
-            this.wordsToPlace.clear();
-            this.placedWords.clear();
 
             ///////////////////////////////////////////
             // Generating the grid with random words //
             ///////////////////////////////////////////
-            ArrayList<Word> wordsList = new ArrayList<>(Game.getInstance().getWords().values());
-            for (int i = 0; i < Grid.MAX_WORDS_COUNT && wordsList.size() > 0; i++) {
-                int randomIndex = (int) (Math.random() * wordsList.size());
-                Word w = wordsList.remove(randomIndex);
-                this.wordsToPlace.add(w);
-            }
+
+            clearPlacedWords();
             printDebugLn("\n========================\nCreating new grid with: " + this.wordsToPlace + "\n========================");
             resetGridToFitWords();
 
@@ -472,14 +480,9 @@ public class Grid {
 
                 // Handle other wordsToPlace);
                 if (!placeNextWords()) {
-                    this.placedWords = new HashMap<>();
+                    this.placedWords.clear();
                     this.wordsToPlace.clear();
-                    wordsList = new ArrayList<>(Game.getInstance().getWords().values());
-                    for (int i = 0; i < Grid.MAX_WORDS_COUNT && wordsList.size() > 0; i++) {
-                        int randomIndex = (int) (Math.random() * wordsList.size());
-                        Word w = wordsList.remove(randomIndex);
-                        this.wordsToPlace.add(w);
-                    }
+                    clearPlacedWords();
                     longestWord = getLongestWord();
 
                     this.grid = backupGrid;
