@@ -2,7 +2,7 @@ package slam.controller;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.layout.BorderPane;
@@ -29,12 +29,6 @@ public class WelcomeCtl {
     private ComboBox<File> deckSelector;
 
     @FXML
-    private Button manualDeckSelector;
-
-    @FXML
-    private Button loadQuestionsButton;
-
-    @FXML
     private Button startRandomGame;
 
     private BorderPane centerBorderPane;
@@ -43,7 +37,6 @@ public class WelcomeCtl {
     private boolean isSelecting;
 
     public WelcomeCtl() {
-
     }
 
     @FXML
@@ -67,21 +60,23 @@ public class WelcomeCtl {
             deckSelector.getItems().clear();
             deckSelector.getItems().addAll(Arrays.asList(wordsFile));
         }
+        loadQuestions();
     }
 
     public void loadWordFile() {
-        if( isSelecting ) {
+        if (isSelecting) {
             return;
         }
         isSelecting = true;
         File selectedWordFile = deckSelector.getSelectionModel().getSelectedItem();
-        if( selectedWordFile == null ) {
+        if (selectedWordFile == null) {
             return;
         }
         Pair<Integer, Collection<File>> result = loadWordFile(Collections.singleton(selectedWordFile));
-        if( result.getValue().size() == 1) {
+        if (result.getValue().size() == 1) {
+            deckSelector.getSelectionModel().clearSelection();
             deckSelector.getItems().remove(selectedWordFile);
-            if( deckSelector.getItems().isEmpty() ) {
+            if (deckSelector.getItems().isEmpty()) {
                 deckSelector.setDisable(true);
             }
             if (Game.getInstance().canStart()) {
@@ -94,6 +89,11 @@ public class WelcomeCtl {
     public void setPanes(BorderPane centerBorderPane, VBox questionPane) {
         this.centerBorderPane = centerBorderPane;
         this.questionPane = questionPane;
+    }
+
+    public void reset() {
+        initialize();
+        isSelecting = false;
     }
 
     public void startRandomGame() {
@@ -112,10 +112,12 @@ public class WelcomeCtl {
                 QuestionCtl questionCtl = new QuestionCtl(gridCtl, questionPane);
                 questionCtl.setNewQuestion();
 
+                this.centerBorderPane.setBottom(this.questionPane);
                 this.questionPane.setVisible(true);
                 this.centerBorderPane.getCenter().setVisible(true);
+                WindowCtl.showMessage(AlertType.INFORMATION, "Random grid generated!", "");
 
-            }catch(IOException ioe) {
+            } catch (IOException ioe) {
                 ioe.printStackTrace();
             }
             return null;
@@ -127,37 +129,31 @@ public class WelcomeCtl {
         int loadedFiles = loadedWords.getValue().size();
 
         if (loadedFiles > 0) {
-            Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
-            confirm.setTitle("Word file(s) loaded!");
-            confirm.setHeaderText("Word file(s) loaded!");
-
-            confirm.setContentText(loadedWords.getKey() + " Words from the " + loadedFiles + " Word file(s) \n" + WindowCtl.listToPrettyString(loadedWords.getValue()) + "\n have been loaded successfully!");
-            confirm.showAndWait();
+            WindowCtl.showMessage(AlertType.CONFIRMATION,
+                    "Word file(s) loaded!",
+                    loadedWords.getKey() + " Words from the " + loadedFiles + " Word file(s) \n" + WindowCtl.listToPrettyString(loadedWords.getValue()) + "\n have been loaded successfully!");
         }
         return loadedWords;
     }
 
     public void loadCustomWordFile() {
         List<File> selectedWordFiles = WindowCtl.CSVFileSelector(root.getScene().getWindow());
-        if(selectedWordFiles == null) {
+        if (selectedWordFiles == null) {
             return;
         }
         loadWordFile(selectedWordFiles);
     }
 
-    public void loadQuestions() {
+    public static void loadQuestions() {
         Pair<Integer, Collection<File>> result = WindowCtl.loadAllDefaultQuestions();
-        if(result.getValue().size() > 0 ) {
-            Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
-            confirm.setTitle("Question file(s) loaded!");
-            confirm.setHeaderText("Question file(s) loaded!");
+        if (result.getValue().size() > 0) {
+            WindowCtl.showMessage(AlertType.CONFIRMATION,
+                    "Question file(s) loaded!",
+                    result.getKey() + " Questions have been loaded successfully!");
+        }
+    }
 
-            confirm.setContentText(result.getKey() + " Questions have been loaded successfully!");
-            confirm.showAndWait();
-            loadQuestionsButton.setDisable(true);
-        }
-        if (Game.getInstance().canStart()) {
-            startRandomGame.setDisable(false);
-        }
+    public void loadCustomQuestionFile() {
+        WindowCtl.fileLoadQuestions(this.root.getScene().getWindow());
     }
 }

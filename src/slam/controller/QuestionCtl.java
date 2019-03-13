@@ -103,7 +103,7 @@ public class QuestionCtl implements Observer {
         if (this.currentQuestion.getExplanation() != null) {
             contentText += ", because " + this.currentQuestion.getExplanation();
         }
-        messageLabel.setText(contentText + ". Click on a word to guess it!");
+        messageLabel.setText(contentText + ".\n Click on a word to guess it!");
         messageLabel.getStyleClass().clear();
         messageLabel.getStyleClass().add("success");
 

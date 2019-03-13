@@ -54,6 +54,10 @@ public class GridWord extends Word {
         return true;
     }
 
+    public boolean validate(String guess) {
+        return this.content.equals(guess.toUpperCase());
+    }
+
     public void revealLetter(char letter) {
         for (int i = 0; i < this.content.length(); i++) {
             if (this.content.charAt(i) == Character.toUpperCase(letter)) {

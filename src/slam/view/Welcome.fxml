@@ -8,41 +8,43 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="slam.controller.WelcomeCtl">
+<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="slam.controller.WelcomeCtl">
    <center>
       <AnchorPane BorderPane.alignment="CENTER">
-         <Label alignment="CENTER" text="Welcome to Grand Chelem!" textAlignment="CENTER" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
+         <Label alignment="CENTER" text="Welcome to Grand Chelem!" textAlignment="CENTER" AnchorPane.leftAnchor="30.0" AnchorPane.rightAnchor="30.0" AnchorPane.topAnchor="30.0">
             <font>
                <Font size="34.0" />
             </font>
          </Label>
-         <Label text="Grand Chelem is a word game inspired by the French TV Show 'Slam'. It is designed to help its users learn vocabulary with fun. You can pick one or several word deck to get started!" wrapText="true" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="80.0">
+         <Label text="Grand Chelem is a word game inspired by the French TV Show 'Slam'. It is designed to help its users learn vocabulary with fun. You can pick one or several word deck to get started!" textAlignment="CENTER" wrapText="true" AnchorPane.leftAnchor="30.0" AnchorPane.rightAnchor="30.0" AnchorPane.topAnchor="100.0">
             <font>
                <Font size="14.0" />
             </font></Label>
-         <HBox alignment="CENTER" layoutX="200.0" layoutY="166.0" prefHeight="0.0" spacing="20.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="166.0">
-               <ComboBox fx:id="deckSelector" minWidth="350.0" onAction="#loadWordFile" promptText="Choose your Word deck..." style="-fx-font-size: 20px;" />
-               <Label text="or" />
-               <Button fx:id="manualDeckSelector" mnemonicParsing="false" onAction="#loadCustomWordFile" text="Load a word file">
-                  <font>
-                     <Font size="20.0" />
-                  </font>
-               </Button>
+         <HBox alignment="CENTER" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="166.0">
+            <children>
+                  <ComboBox fx:id="deckSelector" minWidth="350.0" onAction="#loadWordFile" promptText="Choose your Word deck..." style="-fx-font-size: 20px;" />
+            </children>
          </HBox>
-         <HBox alignment="CENTER" layoutX="179.0" layoutY="286.0" spacing="30.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0">
-            <Button fx:id="loadQuestionsButton" mnemonicParsing="false" onAction="#loadQuestions" text="Load questions">
-               <font>
-                  <Font size="16.0" />
-               </font></Button>
-            <Button fx:id="startRandomGame" defaultButton="true" disable="true" mnemonicParsing="false" onAction="#startRandomGame" text="Start Random Game">
-               <font>
-                  <Font size="16.0" />
-               </font></Button>
-            <Button mnemonicParsing="false" text="Button">
+         <HBox alignment="CENTER" layoutX="20.0" layoutY="235.0" spacing="30.0" AnchorPane.bottomAnchor="150.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0">
+            <Button fx:id="loadQuestionsButton" maxWidth="250.0" mnemonicParsing="false" onAction="#loadCustomQuestionFile" prefWidth="250.0" text="Load external Questions...">
                <font>
                   <Font size="16.0" />
                </font>
             </Button>
+               <Button maxWidth="250.0" mnemonicParsing="false" onAction="#loadCustomWordFile" prefWidth="250.0" text="Load external Words...">
+                  <font>
+                     <Font size="16.0" />
+                  </font>
+               </Button>
+         </HBox>
+         <HBox alignment="CENTER" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+            <children>
+               <Button fx:id="startRandomGame" defaultButton="true" disable="true" mnemonicParsing="false" onAction="#startRandomGame" text="Start Game">
+                  <font>
+                     <Font name="System Bold" size="20.0" />
+                  </font>
+               </Button>
+            </children>
          </HBox>
       </AnchorPane>
    </center>

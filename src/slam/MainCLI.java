@@ -1,11 +1,9 @@
 package slam;
 
 import slam.model.*;
-import slam.model.loader.InvalidGridFileException;
 import slam.model.loader.InvalidQuestionFileException;
 import slam.model.loader.InvalidWordFileException;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
@@ -28,15 +26,12 @@ public class MainCLI {
                 }
             }
 
-            int gridLoaded = game.loadGrids("data/grids");
-
-            System.out.println("Loaded " + gridLoaded + " grids");
-
             int questionsLoaded = game.loadQuestions("data/questions.csv");
 
             System.out.println("Loaded " + questionsLoaded + " questions");
 
-            Grid grid = game.randomChangeCurrentGrid();
+            game.generateRandomCurrentGrid();
+            Grid grid = game.getCurrentGrid();
             System.out.println(grid.shortInfo());
 
             Scanner scanner = new Scanner(System.in);
@@ -53,16 +48,16 @@ public class MainCLI {
                 }
                 if (!q.validate(answer)) {
                     System.out.println("Wrong answer!");
-                    System.out.println("Correct answer was: "+q.getLetter());
-                    if(q.getExplanation() != null ) {
-                        System.out.println("\tBecause "+q.getExplanation());
+                    System.out.println("Correct answer was: " + q.getLetter());
+                    if (q.getExplanation() != null) {
+                        System.out.println("\tBecause " + q.getExplanation());
                     }
                     continue;
                 }
 
                 // We have a correct answer
                 System.out.println("Correct!");
-                if(q.getExplanation() != null ) {
+                if (q.getExplanation() != null) {
                     System.out.println("\tBecause " + q.getExplanation());
                 }
 
@@ -72,34 +67,29 @@ public class MainCLI {
 
                 // We can now try to reveal a word
                 ArrayList<GridWord> remainingWords = grid.getNonRevealedWords();
-                System.out.println("You can try to guess a complete word. Please choose among:");
-                for(int i = 0; i < remainingWords.size(); i++) {
-                    System.out.println("\t"+i+ ": "+remainingWords.get(i));
-                }
-                System.out.print("\n> ");
-                int wordIndex = scanner.nextInt();
-                while (wordIndex < 0 || wordIndex >= remainingWords.size()) {
-                    System.err.println("Please enter a correct word number");
+                int wordIndex = 0;
+                do {
                     System.out.println("You can try to guess a complete word. Please choose among:");
-                    for(int i = 0; i < remainingWords.size(); i++) {
-                        System.out.println("\t"+i+ ": "+remainingWords.get(i));
+                    for (int i = 0; i < remainingWords.size(); i++) {
+                        System.out.println("\t" + i + ": " + remainingWords.get(i));
                     }
+                    System.out.print("\n> ");
                     wordIndex = scanner.nextInt();
-                }
+                } while (wordIndex < 0 || wordIndex >= remainingWords.size());
                 GridWord selectedWordToGuess = remainingWords.get(wordIndex);
-                System.out.println("What's your guess for this word?\n\t"+selectedWordToGuess);
+                System.out.println("What's your guess for this word?\n\t" + selectedWordToGuess);
                 System.out.print("\n> ");
                 String wordAnswer = scanner.next();
-                if( wordAnswer.toUpperCase().equals(selectedWordToGuess.getContent())) {
+                if (wordAnswer.toUpperCase().equals(selectedWordToGuess.getContent())) {
                     System.out.println("This is correct!");
                     selectedWordToGuess.reveal();
-                }else {
+                } else {
                     System.out.println("Wrong guess, try again next time!");
                 }
             }
 
             System.out.println("Congratulations!");
-        } catch (InvalidWordFileException | InvalidGridFileException | InvalidQuestionFileException | IOException e) {
+        } catch (InvalidWordFileException | InvalidQuestionFileException e) {
             e.printStackTrace();
         }
     }

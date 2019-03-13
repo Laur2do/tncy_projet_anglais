@@ -23,8 +23,6 @@ public class GridCtl implements Observer {
 
     private QuestionCtl questionCtl;
 
-    private boolean canGuessWord;
-
     private interface Lambda {
         void execute();
     }
@@ -77,7 +75,6 @@ public class GridCtl implements Observer {
                     this.questionCtl.cleanMessage();
                     this.questionCtl.setNewQuestion();
                 }
-
             });
 
         } catch (IOException ioe) {
@@ -86,13 +83,18 @@ public class GridCtl implements Observer {
     }
 
     public void setEnableGuess(boolean enable, QuestionCtl questionCtl) {
-        this.canGuessWord = enable;
+        Game.getInstance().setCanGuessWord(enable);
         this.questionCtl = questionCtl;
     }
 
     public void updateGridPane() {
-        Grid currentGrid = Game.getInstance().getCurrentGrid();
         this.gridPane.getChildren().clear();
+
+
+        Grid currentGrid = Game.getInstance().getCurrentGrid();
+        if( currentGrid == null) {
+            return;
+        }
 
         for (final GridWord gw : currentGrid.getPlacedWords()) {
             boolean[] revealed = gw.getRevealedLetters();
@@ -117,8 +119,8 @@ public class GridCtl implements Observer {
                     cellLabel = new Label(String.valueOf(letter));
                     this.gridPane.add(cellLabel, x, y);
                     cellLabel.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
-                        if (this.canGuessWord && !gw.isRevealed()) {
-                            this.canGuessWord = false;
+                        if (Game.getInstance().canGuessWord() && !gw.isRevealed()) {
+                            Game.getInstance().setCanGuessWord(false);
                             showGuessWord(gw, () -> {
                                 printDebugLn(currentGrid.toString());
                                 for (Label label : cellLabels) {
@@ -141,31 +143,31 @@ public class GridCtl implements Observer {
                 cellLabels[index] = cellLabel;
 
                 cellLabel.getStyleClass().add("grid-cell");
-                if( revealed[index] ) {
+                if (revealed[index]) {
                     cellLabel.getStyleClass().add("grid-cell-revealed");
                 }
                 cellLabel.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> {
-                    if (this.canGuessWord) {
+                    if (Game.getInstance().canGuessWord()) {
                         for (Label label : cellLabels) {
                             label.getStyleClass().add("grid-cell-hover");
                         }
                     }
                 });
                 cellLabel.addEventHandler(MouseEvent.MOUSE_EXITED, e -> {
-                    if (this.canGuessWord) {
+                    if (Game.getInstance().canGuessWord()) {
                         for (Label label : cellLabels) {
                             label.getStyleClass().remove("grid-cell-hover");
                         }
                     }
                 });
-                if(!gw.isRevealed() && gw.isAlreadyGuessed()) {
+                if (!gw.isRevealed() && gw.isAlreadyGuessed()) {
                     cellLabel.getStyleClass().add("grid-cell-guessed");
-                } else if (gw.isRevealed()){
+                } else if (gw.isRevealed()) {
                     cellLabel.getStyleClass().remove("grid-cell-guessed");
                 }
             }
         }
-        if (this.canGuessWord) {
+        if (Game.getInstance().canGuessWord()) {
             for (Node n : this.gridPane.getChildren()) {
                 n.getStyleClass().add("grid-cell-enabled");
             }

@@ -5,8 +5,6 @@ import slam.model.*;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.MissingResourceException;
 
 public class DataLoader {
 
@@ -64,79 +62,6 @@ public class DataLoader {
             e.printStackTrace();
         }
         return loadedWords;
-    }
-
-    /**
-     * Loads a CSV file containing a grid
-     *
-     * @param path Path to the file to load
-     * @throws InvalidGridFileException When the file is incorrect
-     */
-    public static void loadGridFile(String path) throws InvalidGridFileException {
-        HashMap<String, Word> gameWords = Game.getInstance().getWords();
-        if (gameWords.size() == 0) {
-            throw new MissingResourceException("Can't load GridCtl if words aren't loaded", "Game", "listOfWords");
-        }
-        Grid grid;
-        try {
-            BufferedReader source_file = new BufferedReader(new FileReader(path));
-            String line;
-
-            //The first line contains the header and the grid dimensions
-            String[] info = source_file.readLine().split(",");
-            if (info.length == 6) {
-                grid = new Grid(Integer.valueOf(info[4]), Integer.valueOf(info[5]));
-            } else {
-                grid = new Grid();
-            }
-
-            int lineNumber = 1;
-            while ((line = source_file.readLine()) != null) {
-                lineNumber++;
-                if( line.isEmpty()) {
-                    continue;
-                }
-
-                String[] tabStrings = line.split(",");
-
-                if (tabStrings.length != 4) {
-                    throw new InvalidGridFileException(path, lineNumber, line, "Each line in a GridCtl file must contain content,orientation,start_x,start_y");
-                }
-                tabStrings[0] = tabStrings[0].toUpperCase();
-                tabStrings[1] = tabStrings[1].toUpperCase();
-                if (!gameWords.containsKey(tabStrings[0])) {
-                    throw new InvalidGridFileException(path, lineNumber, line, "Word is not known by the Game");
-                }
-                Orientation orientation = Orientation.VERTICAL;
-                if (tabStrings[1].equals("HORIZONTAL")) {
-                    orientation = Orientation.HORIZONTAL;
-                } else if (!tabStrings[1].equals("VERTICAL")) {
-                    throw new InvalidGridFileException(path, lineNumber, line, "Second item must be an orientation: horizontal or vertical");
-                }
-                try {
-                    int startX = Integer.valueOf(tabStrings[2]),
-                            startY = Integer.valueOf(tabStrings[3]);
-                    if (startX < 0 || startY < 0) {
-                        throw new InvalidGridFileException(path, lineNumber, line, "Third & fourth items must be positive integers.");
-                    }
-                    if (startX >= grid.w() || startY >= grid.h()) {
-                        throw new InvalidGridFileException(path, lineNumber, line, "Third & fourth items must be lower than the grid's dimensions");
-                    }
-                    GridWord word = grid.placeWord(gameWords.get(tabStrings[0]), orientation, startX, startY);
-                    if (word == null) {
-                        throw new InvalidGridFileException(path, lineNumber, line, "Placing word is incompatible with already placed words");
-                    }
-                } catch (NumberFormatException nbe) {
-                    throw new InvalidGridFileException(path, lineNumber, line, "Third & fourth items must be valid integers");
-                }
-            }
-
-            Game.getInstance().addGrid(grid);
-
-        } catch (IOException e) {
-            System.err.println("Read error on file " + path);
-            e.printStackTrace();
-        }
     }
 
     /**

@@ -1,50 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
 
-<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="slam.controller.WindowCtl">
+<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="850.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="slam.controller.WindowCtl">
    <center>
-      <BorderPane fx:id="centerBorderPane" styleClass="body">
-         <right>
-            <VBox fx:id="leftPane" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER" />
-         </right>
-      </BorderPane>
+      <BorderPane fx:id="centerBorderPane" styleClass="body" />
    </center>
    <bottom>
-      <HBox fx:id="statusBar" prefHeight="20.0" prefWidth="1280.0" BorderPane.alignment="CENTER" />
+      <HBox fx:id="statusBar" alignment="CENTER_LEFT" prefHeight="20.0" prefWidth="1280.0" BorderPane.alignment="CENTER">
+        <Label fx:id="status" maxWidth="1.7976931348623157E308" text="Label" HBox.hgrow="ALWAYS" />
+        <Button mnemonicParsing="false" text="Button" />
+      </HBox>
    </bottom>
    <top>
-      <MenuBar fx:id="menuBar" BorderPane.alignment="CENTER">
-        <menus>
-            <Menu text="_File">
-              <items>
-                  <MenuItem onAction="#fileLoadDefaultData" text="Load _Default data" />
-                  <SeparatorMenuItem mnemonicParsing="false" />
-                  <MenuItem onAction="#fileLoadWords" text="Load _Words file (.csv)" />
-                  <MenuItem onAction="#fileLoadQuestions" text="Load _Questions file (.csv)" />
-                <MenuItem onAction="#fileLoadGrid" text="Load _Grid file (.csv)" />
-              </items>
-            </Menu>
-          <Menu text="_Game">
-            <items>
-                  <MenuItem onAction="#newRandomGrid" text="New _Random Grid" />
-                  <MenuItem fx:id="newMenuItem" onAction="#newGrid" text="_New" />
-                  <MenuItem fx:id="restartMenuItem" onAction="#reset" text="Re_start" />
-              <MenuItem fx:id="exitMenuItem" onAction="#exit" text="Exit" />
-            </items>
-          </Menu>
-          <Menu mnemonicParsing="false" text="_Help">
-            <items>
-              <MenuItem onAction="#about" text="_About" />
-            </items>
-          </Menu>
-        </menus>
+      <MenuBar BorderPane.alignment="CENTER">
+        <Menu text="_Game">
+            <MenuItem onAction="#newGame" text="_New Game" />
+          <MenuItem onAction="#newRandomGrid" text="New _Random Grid" />
+          <MenuItem onAction="#reset" text="Re_start current grid" />
+            <SeparatorMenuItem mnemonicParsing="false" />
+          <MenuItem onAction="#exit" text="Exit" />
+        </Menu>
+        <Menu text="_File">
+          <MenuItem onAction="#fileLoadWords" text="Load _Words file (.csv)" />
+          <MenuItem onAction="#fileLoadQuestions" text="Load _Questions file (.csv)" />
+        </Menu>
+        <Menu mnemonicParsing="false" text="_Help">
+          <MenuItem onAction="#about" text="_About" />
+        </Menu>
       </MenuBar>
    </top>
 </BorderPane>

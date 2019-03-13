@@ -27,13 +27,14 @@ public class Grid {
 
     private Cell[][] grid;
 
-    private HashMap<Word, GridWord> placedWords;
+    private final HashMap<Word, GridWord> placedWords;
 
     private final HashSet<Word> wordsToPlace;
 
     public Grid() {
         this(MAX_GRID_WIDTH, MAX_GRID_HEIGHT);
     }
+
 
     public Grid(int width, int height) {
         grid = new Cell[width][height];
@@ -46,11 +47,11 @@ public class Grid {
         return gridToString(false);
     }
 
-    public int w() {
+    private int w() {
         return grid[0].length;
     }
 
-    public int h() {
+    private int h() {
         return grid.length;
     }
 
@@ -159,15 +160,7 @@ public class Grid {
         return this.placedWords.values();
     }
 
-    public GridWord placeWord(Word w, Orientation direction, int firstCharX, int firstCharY) {
-        return do_placeWord(w, direction, firstCharX, firstCharY, true);
-    }
-
-    private GridWord internal_placeWord(Word w, Orientation direction, int firstCharX, int firstCharY) {
-        return do_placeWord(w, direction, firstCharX, firstCharY, false);
-    }
-
-    private GridWord do_placeWord(Word w, Orientation direction, int firstCharX, int firstCharY, boolean ignoreWordsToPlace) {
+    private GridWord do_placeWord(Word w, Orientation direction, int firstCharX, int firstCharY) {
         int wordLength = w.getLength();
         // Ensure the bounds of the grid are respected depending on the orientation
         if (firstCharX >= w() || firstCharY >= h() ||
@@ -209,10 +202,10 @@ public class Grid {
         }
 
         // Word is placed correctly, we remove it from the words to place and save it in the placedWords
-        if (!this.wordsToPlace.contains(w) && !ignoreWordsToPlace) {
+        if (!this.wordsToPlace.contains(w)) {
             throw new IllegalStateException("Error trying to place word " + w + " which is not to place: " + this.wordsToPlace);
         }
-        if (this.placedWords.containsKey(w) && !ignoreWordsToPlace) {
+        if (this.placedWords.containsKey(w)) {
             throw new IllegalStateException("Error trying to place word " + w + " which is already placed " + this.placedWords);
         }
 
@@ -317,7 +310,7 @@ public class Grid {
             firstCharY = (int) (Math.random() * h());
         }
 
-        return internal_placeWord(w, direction, firstCharX, firstCharY);
+        return do_placeWord(w, direction, firstCharX, firstCharY);
     }
 
     private Pair<Pair<Word, GridWord>, Pair<Integer, Integer>> findCompatibleRemainingWord() {
@@ -398,7 +391,7 @@ public class Grid {
                 }
                 Cell[][] backupGrid = copyGrid(this.grid);
                 printDebugLn("Placing word " + w + " with word " + previousWord + " (on " + w.getLetter(commonLetterIndexes.getKey()) + ")(" + firstCharX + "," + firstCharY + ")");
-                GridWord gridWord = internal_placeWord(w, direction, firstCharX, firstCharY);
+                GridWord gridWord = do_placeWord(w, direction, firstCharX, firstCharY);
 
                 if (gridWord == null) {
                     printDebugLn("\t Can't place word, retrying");
