@@ -51,12 +51,12 @@ public class GridCtl implements Observer {
             popupFXML.setLocation(getClass().getResource("../view/GuessWord.fxml"));
             VBox guessWordDialogContent = popupFXML.load();
 
-            GuessWordCtl ctl = popupFXML.getController();
-            ctl.setGridWord(gw);
-
             BorderPane centerBorderPane = ((BorderPane) this.gridPane.getParent());
             this.questionPane = centerBorderPane.getBottom();
             centerBorderPane.setBottom(guessWordDialogContent);
+
+            GuessWordCtl ctl = popupFXML.getController();
+            ctl.setGridWord(gw);
 
             TextField answer = (TextField) guessWordDialogContent.lookup("#answer");
             answer.setOnAction(event -> {

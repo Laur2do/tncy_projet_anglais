@@ -11,7 +11,7 @@ import slam.controller.WindowCtl;
 
 public class Main extends Application {
 
-    private final static boolean DEBUG = true;
+    private final static boolean DEBUG = false;
     public final static String TITLE = "Grand Chelem";
 
     public static void printDebugLn(Object obj) {

@@ -46,6 +46,7 @@ public class GuessWordCtl {
             return c;
         };
         this.answer.setTextFormatter(new TextFormatter(modifyChange));
+        this.answer.requestFocus();
     }
 
     public void validate() {
