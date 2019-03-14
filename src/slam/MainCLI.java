@@ -17,7 +17,7 @@ public class MainCLI {
         // launch(args);
         Game game = Game.getInstance();
         try {
-            int loadedWords = game.loadWords("data/words.csv");
+            int loadedWords = game.loadWords("data/toeic.csv");
             System.out.println("Loaded " + loadedWords + " words");
             if (DEBUG) {
                 HashMap<String, Word> words = game.getWords();

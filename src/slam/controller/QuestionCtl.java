@@ -128,6 +128,7 @@ public class QuestionCtl implements Observer {
             messageLabel.setText("Please enter a valid letter");
             messageLabel.getStyleClass().clear();
             messageLabel.getStyleClass().add("critical-error");
+            WindowCtl.packWindow();
             return;
         }
 
@@ -135,6 +136,7 @@ public class QuestionCtl implements Observer {
             displayWrongAnswerMessage();
             this.answer.setText("");
             this.setNewQuestion();
+            WindowCtl.packWindow();
             return;
         } else {
             displayGoodAnswerMessage();
@@ -149,6 +151,7 @@ public class QuestionCtl implements Observer {
         this.answer.setText("");
         this.answer.setVisible(false);
         this.question.setText("");
+        WindowCtl.packWindow();
     }
 
     public void update(Observable obs, Object obj) {

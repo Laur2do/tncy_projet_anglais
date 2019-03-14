@@ -3,6 +3,7 @@ package slam;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -12,7 +13,7 @@ import slam.controller.WindowCtl;
 public class Main extends Application {
 
     private final static boolean DEBUG = false;
-    public final static String TITLE = "Grand Chelem";
+    public final static String TITLE = "Slam Learning";
 
     public static void printDebugLn(Object obj) {
         if (DEBUG) {
@@ -24,14 +25,16 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
         // Load Window (root)
         FXMLLoader windowFXML = new FXMLLoader();
-        windowFXML.setLocation(getClass().getResource("view/Window.fxml"));
+        windowFXML.setLocation(Main.class.getResource("view/Window.fxml"));
         BorderPane rootPane = windowFXML.load();
 
-        primaryStage.setTitle("Grand Chelem");
+        primaryStage.setTitle(TITLE);
+        primaryStage.getIcons().add(new Image(Main.class.getResourceAsStream("view/res/icon.png")));
+        primaryStage.centerOnScreen();
 
         // Set the scene from the root
         Scene scene = new Scene(rootPane);
-        scene.getStylesheets().add(getClass().getResource("view/style.css").toExternalForm());
+        scene.getStylesheets().add(Main.class.getResource("view/res/style.css").toExternalForm());
 
         primaryStage.setScene(scene);
         primaryStage.show(); // required now for lookup
@@ -41,12 +44,12 @@ public class Main extends Application {
 
         // Load the welcome page
         FXMLLoader welcomeFXML = new FXMLLoader();
-        welcomeFXML.setLocation(getClass().getResource("view/Welcome.fxml"));
+        welcomeFXML.setLocation(Main.class.getResource("view/Welcome.fxml"));
         BorderPane welcome = welcomeFXML.load();
 
         // Load the question pane
         FXMLLoader questionFXML = new FXMLLoader();
-        questionFXML.setLocation(getClass().getResource("view/Question.fxml"));
+        questionFXML.setLocation(Main.class.getResource("view/Question.fxml"));
         VBox questionPane = questionFXML.load();
         questionPane.setVisible(false);
 

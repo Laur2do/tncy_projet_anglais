@@ -55,6 +55,14 @@ public class WindowCtl {
     public WindowCtl() {
     }
 
+    public static void packWindow() {
+        if(statusRef != null) {
+            Window w = statusRef.getScene().getWindow();
+            w.sizeToScene();
+            w.centerOnScreen();
+        }
+    }
+
     @FXML
     private void initialize() {
         WindowCtl.statusRef = this.status;
@@ -65,6 +73,7 @@ public class WindowCtl {
         alert.setTitle("Error reading file");
         alert.setHeaderText("Error reading file " + f);
         alert.setContentText(e.getMessage());
+        alert.getDialogPane().getScene().getWindow().centerOnScreen();
         alert.showAndWait();
     }
 
@@ -246,6 +255,7 @@ public class WindowCtl {
 
     public void newRandomGrid() {
         newRandomGrid(root, null);
+        packWindow();
     }
 
     public void newGame() {
@@ -253,6 +263,7 @@ public class WindowCtl {
         welcomeCtl.reset();
         ((BorderPane)root.getCenter()).setCenter(welcomePane);
         ((BorderPane)root.getCenter()).setBottom(null);
+        packWindow();
     }
 
     public void reset() {
@@ -269,7 +280,12 @@ public class WindowCtl {
     }
 
     public void about() {
-        String about = "This is a Java implementation of the TV French game Slam, made for a TELECOM Nancy 2A English project";
+        String about = "This is a Java implementation of the TV French game 'Slam!', made for a TELECOM Nancy 2A English project.";
+        about += "\n\n";
+        about += "March 2018\n\n";
+        about += "Made by:\n";
+        about += " - Laury de DONATO\n";
+        about += " - Marie TUAUDEN\n";
         printDebugLn(about);
         Dialog d = new Dialog();
         Window window = d.getDialogPane().getScene().getWindow();

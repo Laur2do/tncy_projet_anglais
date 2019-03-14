@@ -10,6 +10,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Pair;
 import javafx.util.StringConverter;
+import slam.Main;
 import slam.model.Game;
 import slam.model.Grid;
 
@@ -101,7 +102,7 @@ public class WelcomeCtl {
             try {
                 // Load the grid
                 FXMLLoader gridFXML = new FXMLLoader();
-                gridFXML.setLocation(getClass().getResource("../view/Grid.fxml"));
+                gridFXML.setLocation(Main.class.getResource("view/Grid.fxml"));
                 GridPane gridPane = gridFXML.load();
 
                 // Assemble grid & root's center pane
@@ -116,7 +117,7 @@ public class WelcomeCtl {
                 this.questionPane.setVisible(true);
                 this.centerBorderPane.getCenter().setVisible(true);
                 WindowCtl.showMessage(AlertType.INFORMATION, "Random grid generated!", "");
-
+                WindowCtl.packWindow();
             } catch (IOException ioe) {
                 ioe.printStackTrace();
             }

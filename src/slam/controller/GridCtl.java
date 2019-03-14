@@ -8,6 +8,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import slam.Main;
 import slam.model.*;
 
 import java.io.IOException;
@@ -48,7 +49,7 @@ public class GridCtl implements Observer {
         // Load the popup
         try {
             FXMLLoader popupFXML = new FXMLLoader();
-            popupFXML.setLocation(getClass().getResource("../view/GuessWord.fxml"));
+            popupFXML.setLocation(Main.class.getResource("view/GuessWord.fxml"));
             VBox guessWordDialogContent = popupFXML.load();
 
             BorderPane centerBorderPane = ((BorderPane) this.gridPane.getParent());
@@ -89,7 +90,6 @@ public class GridCtl implements Observer {
 
     public void updateGridPane() {
         this.gridPane.getChildren().clear();
-
 
         Grid currentGrid = Game.getInstance().getCurrentGrid();
         if( currentGrid == null) {
