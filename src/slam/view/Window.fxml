@@ -5,6 +5,7 @@
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.input.KeyCodeCombination?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 
@@ -20,9 +21,18 @@
    <top>
       <MenuBar BorderPane.alignment="CENTER">
         <Menu text="_Game">
-            <MenuItem onAction="#newGame" text="_Back to main page" />
-          <MenuItem onAction="#newRandomGrid" text="New _Random Grid" />
-          <MenuItem onAction="#reset" text="Re_start current grid" />
+            <MenuItem onAction="#newGame" text="_Back to main page">
+               <accelerator>
+                  <KeyCodeCombination alt="UP" code="HOME" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+               </accelerator></MenuItem>
+          <MenuItem onAction="#newRandomGrid" text="New _Random Grid">
+               <accelerator>
+                  <KeyCodeCombination alt="UP" code="N" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+               </accelerator></MenuItem>
+          <MenuItem onAction="#reset" text="Re_start current grid">
+               <accelerator>
+                  <KeyCodeCombination alt="UP" code="R" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+               </accelerator></MenuItem>
             <SeparatorMenuItem mnemonicParsing="false" />
           <MenuItem onAction="#exit" text="Exit" />
         </Menu>
@@ -31,6 +41,7 @@
           <MenuItem onAction="#fileLoadQuestions" text="Load _Questions file (.csv)" />
         </Menu>
         <Menu mnemonicParsing="false" text="_Help">
+            <MenuItem onAction="#howTo" text="_How to play" visible="false" />
           <MenuItem onAction="#about" text="_About" />
         </Menu>
       </MenuBar>

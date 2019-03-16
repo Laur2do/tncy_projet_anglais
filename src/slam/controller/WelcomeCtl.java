@@ -98,31 +98,36 @@ public class WelcomeCtl {
     }
 
     public void startRandomGame() {
-        WindowCtl.newRandomGrid(root, (Grid g) -> {
-            try {
-                // Load the grid
-                FXMLLoader gridFXML = new FXMLLoader();
-                gridFXML.setLocation(Main.class.getResource("view/Grid.fxml"));
-                GridPane gridPane = gridFXML.load();
+        if (Game.getInstance().canStart()) {
+            WindowCtl.newRandomGrid(root, (Grid g) -> {
+                if( g == null) {
+                    return null;
+                }
+                try {
+                    // Load the grid
+                    FXMLLoader gridFXML = new FXMLLoader();
+                    gridFXML.setLocation(Main.class.getResource("view/Grid.fxml"));
+                    GridPane gridPane = gridFXML.load();
 
-                // Assemble grid & root's center pane
-                this.centerBorderPane.setCenter(gridPane);
+                    // Assemble grid & root's center pane
+                    this.centerBorderPane.setCenter(gridPane);
 
-                GridCtl gridCtl = new GridCtl(gridPane);
-                gridCtl.updateGridPane();
-                QuestionCtl questionCtl = new QuestionCtl(gridCtl, questionPane);
-                questionCtl.setNewQuestion();
+                    GridCtl gridCtl = new GridCtl(gridPane);
+                    gridCtl.updateGridPane();
+                    QuestionCtl questionCtl = new QuestionCtl(gridCtl, questionPane);
+                    questionCtl.setNewQuestion();
 
-                this.centerBorderPane.setBottom(this.questionPane);
-                this.questionPane.setVisible(true);
-                this.centerBorderPane.getCenter().setVisible(true);
-                WindowCtl.showMessage(AlertType.INFORMATION, "Random grid generated!", "");
-                WindowCtl.packWindow();
-            } catch (IOException ioe) {
-                ioe.printStackTrace();
-            }
-            return null;
-        });
+                    this.centerBorderPane.setBottom(this.questionPane);
+                    this.questionPane.setVisible(true);
+                    this.centerBorderPane.getCenter().setVisible(true);
+                    WindowCtl.showMessage(AlertType.INFORMATION, "Random grid generated!", "");
+                    WindowCtl.packWindow();
+                } catch (IOException ioe) {
+                    ioe.printStackTrace();
+                }
+                return null;
+            });
+        }
     }
 
     private Pair<Integer, Collection<File>> loadWordFile(Collection<File> selectedWordFiles) {

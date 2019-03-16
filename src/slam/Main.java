@@ -30,7 +30,6 @@ public class Main extends Application {
 
         primaryStage.setTitle(TITLE);
         primaryStage.getIcons().add(new Image(Main.class.getResourceAsStream("view/res/icon.png")));
-        primaryStage.centerOnScreen();
 
         // Set the scene from the root
         Scene scene = new Scene(rootPane);
@@ -62,6 +61,8 @@ public class Main extends Application {
 
         WindowCtl windowCtl = windowFXML.getController();
         windowCtl.setWelcomePane(welcome, welcomeCtl);
+
+        primaryStage.centerOnScreen();
     }
 
     public static void main(String[] args) {

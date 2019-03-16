@@ -6,10 +6,12 @@ import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.util.Callback;
@@ -237,6 +239,9 @@ public class WindowCtl {
     }
 
     public static void newRandomGrid(Node n, Callback<Grid, Void> cb) {
+        if ( !Game.getInstance().canStart()) {
+            return;
+        }
         n.setCursor(Cursor.WAIT);
         n.setDisable(true);
         new Thread(() -> {
@@ -274,9 +279,20 @@ public class WindowCtl {
     }
 
     public void exit() {
-        printDebugLn("Exiting");
-        Stage stage = (Stage) root.getScene().getWindow();
-        stage.close();
+        Alert alert = new Alert(AlertType.CONFIRMATION);
+        alert.setTitle("Are you sure you want to quit?");
+        alert.setHeaderText("Do you already feel prepared enough to pass your TOEIC?");
+        alert.getDialogPane().getScene().getWindow().centerOnScreen();
+        alert.initModality(Modality.WINDOW_MODAL);
+
+        alert.showAndWait();
+        ButtonType result = alert.getResult();
+
+        if( result.getButtonData().isDefaultButton()) {
+            printDebugLn("Exiting");
+            Stage stage = (Stage) root.getScene().getWindow();
+            stage.close();
+        }
     }
 
     public void about() {
@@ -294,6 +310,10 @@ public class WindowCtl {
         d.setHeaderText(d.getTitle());
         d.setContentText(about);
         d.show();
+    }
+
+    public void howTo() {
+
     }
 
     public void setWelcomePane(BorderPane welcome, WelcomeCtl controller) {
