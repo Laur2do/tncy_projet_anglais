@@ -4,12 +4,15 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -26,6 +29,9 @@ import slam.model.loader.InvalidWordFileException;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 
 import static slam.Main.printDebugLn;
@@ -61,7 +67,6 @@ public class WindowCtl {
         if(statusRef != null) {
             Window w = statusRef.getScene().getWindow();
             w.sizeToScene();
-            w.centerOnScreen();
         }
     }
 
@@ -76,6 +81,8 @@ public class WindowCtl {
         alert.setHeaderText("Error reading file " + f);
         alert.setContentText(e.getMessage());
         alert.getDialogPane().getScene().getWindow().centerOnScreen();
+
+        alert.initOwner(statusRef.getScene().getWindow());
         alert.showAndWait();
     }
 
@@ -102,10 +109,11 @@ public class WindowCtl {
 
         confirm.setTitle(title);
         confirm.setHeaderText(title);
+        confirm.initOwner(statusRef.getScene().getWindow());
+        confirm.initModality(Modality.WINDOW_MODAL);
         if (message != null) {
             confirm.setContentText(message);
         }
-
         confirm.showAndWait();
     }
 
@@ -296,7 +304,7 @@ public class WindowCtl {
     }
 
     public void about() {
-        String about = "This is a Java implementation of the TV French game 'Slam!', made for a TELECOM Nancy 2A English project.";
+        String about = Main.TITLE+" is a Java implementation of the TV French game 'Slam!', made for a TELECOM Nancy 2A English project.";
         about += "\n\n";
         about += "March 2018\n\n";
         about += "Made by:\n";
@@ -304,8 +312,9 @@ public class WindowCtl {
         about += " - Marie TUAUDEN\n";
         printDebugLn(about);
         Dialog d = new Dialog();
-        Window window = d.getDialogPane().getScene().getWindow();
-        window.setOnCloseRequest(event -> window.hide());
+        Window dialogWindow = d.getDialogPane().getScene().getWindow();
+        dialogWindow.setOnCloseRequest(event -> dialogWindow.hide());
+        d.initOwner(root.getScene().getWindow());
         d.setTitle("About " + Main.TITLE);
         d.setHeaderText(d.getTitle());
         d.setContentText(about);
@@ -313,7 +322,22 @@ public class WindowCtl {
     }
 
     public void howTo() {
+        WebView webview = new WebView();
+        try {
+            byte[] bytes = Files.readAllBytes (Paths.get(Main.class.getResource("view/res/how-to.html").toURI()));
+            webview.getEngine().loadContent(new String(bytes));
+            final Stage dialog = new Stage();
+            dialog.initOwner(root.getScene().getWindow());
+            dialog.setTitle("How to play " + Main.TITLE);
+            Scene scene = new Scene(webview);
+            dialog.setScene(scene);
+            dialog.sizeToScene();
+            dialog.show();
+            dialog.getIcons().add(new Image(Main.class.getResourceAsStream("view/res/icon.png")));
 
+        }catch(IOException |URISyntaxException e) {
+            e.printStackTrace();
+        }
     }
 
     public void setWelcomePane(BorderPane welcome, WelcomeCtl controller) {

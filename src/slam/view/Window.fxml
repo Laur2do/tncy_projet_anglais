@@ -41,7 +41,7 @@
           <MenuItem onAction="#fileLoadQuestions" text="Load _Questions file (.csv)" />
         </Menu>
         <Menu mnemonicParsing="false" text="_Help">
-            <MenuItem onAction="#howTo" text="_How to play" visible="false" />
+            <MenuItem onAction="#howTo" text="_How to play" />
           <MenuItem onAction="#about" text="_About" />
         </Menu>
       </MenuBar>

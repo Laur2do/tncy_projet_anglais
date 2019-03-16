@@ -51,16 +51,16 @@ public class Game extends Observable {
 
     public boolean canStart() {
         int questionCount = 0;
-        for(ArrayList<Question> questionsDesk : this.questions.values()) {
-            if( questionsDesk.size() == 0) {
+        for (ArrayList<Question> questionsDesk : this.questions.values()) {
+            if (questionsDesk.size() == 0) {
                 return false;
             }
             questionCount += questionsDesk.size();
         }
 
         int wordCount = 0;
-        for(HashMap<String, Word> wordsDeck : this.words.values()) {
-            wordCount +=wordsDeck.size();
+        for (HashMap<String, Word> wordsDeck : this.words.values()) {
+            wordCount += wordsDeck.size();
         }
 
         return wordCount >= Grid.MIN_WORDS_COUNT && questionCount > 0;
@@ -72,7 +72,7 @@ public class Game extends Observable {
             System.err.println("\t new: " + word.getDescription());
             System.err.println("\t old: " + this.words.get(word.getContent()));
         }
-        if( !  this.words.containsKey(type)) {
+        if (!this.words.containsKey(type)) {
             this.words.put(type, new HashMap<>());
         }
         this.words.get(type).put(word.getContent(), word);
@@ -85,7 +85,7 @@ public class Game extends Observable {
 
     public HashMap<String, Word> getWords() {
         HashMap<String, Word> allWords = new HashMap<>();
-        for(HashMap<String, Word> words : this.words.values()) {
+        for (HashMap<String, Word> words : this.words.values()) {
             allWords.putAll(words);
         }
         return allWords;
@@ -108,9 +108,11 @@ public class Game extends Observable {
     }
 
     public void resetGrid() {
-        this.currentGrid.reset();
-        canGuessWord = false;
-        notifyObservers();
+        if (this.currentGrid != null) {
+            this.currentGrid.reset();
+            canGuessWord = false;
+            notifyObservers();
+        }
     }
 
     public void resetGame() {
@@ -131,9 +133,9 @@ public class Game extends Observable {
     public Question getRandomQuestionForLetter(char letter) {
         ArrayList<Question> letterQuestions = questions.get(letter);
         if (letterQuestions.size() == 0) {
-            if( ! this.currentGrid.isRevealed()) {
+            if (!this.currentGrid.isRevealed()) {
                 // Incoherent state: no question found but grid is not revealed
-                System.err.println("No question found for letter "+letter);
+                System.err.println("No question found for letter " + letter);
                 System.err.println(this.currentGrid);
             }
             return null;
