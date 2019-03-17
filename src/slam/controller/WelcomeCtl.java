@@ -75,10 +75,13 @@ public class WelcomeCtl {
         }
         Pair<Integer, Collection<File>> result = loadWordFile(Collections.singleton(selectedWordFile));
         if (result.getValue().size() == 1) {
-            deckSelector.getSelectionModel().clearSelection();
             deckSelector.getItems().remove(selectedWordFile);
+            // Clearing selection after removal triggers a IndexOutOfBoundsException from the deckSelector's items ListChangeListener
+            // It seems harmless and there doesn't seem to be an easy way to fix this.
+            deckSelector.getSelectionModel().clearSelection();
+
             if (deckSelector.getItems().isEmpty()) {
-                deckSelector.setDisable(true);
+                deckSelector.setDisable(false);
             }
             if (Game.getInstance().canStart()) {
                 startRandomGame.setDisable(false);

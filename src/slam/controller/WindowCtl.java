@@ -29,9 +29,6 @@ import slam.model.loader.InvalidWordFileException;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.*;
 
 import static slam.Main.printDebugLn;
@@ -89,7 +86,7 @@ public class WindowCtl {
     public static String listToPrettyString(Collection l) {
         String filesList = l.toString();
         filesList = filesList.substring(1, filesList.length() - 1);
-        filesList = "\t- " + filesList.replaceAll(", ", ",\n\t- ");
+        filesList = filesList.replaceAll("data[/\\\\](words|questions)[/\\\\]", "");
         return filesList;
     }
 
@@ -323,25 +320,59 @@ public class WindowCtl {
 
     public void howTo() {
         WebView webview = new WebView();
-        try {
-            byte[] bytes = Files.readAllBytes (Paths.get(Main.class.getResource("view/res/how-to.html").toURI()));
-            webview.getEngine().loadContent(new String(bytes));
-            final Stage dialog = new Stage();
-            dialog.initOwner(root.getScene().getWindow());
-            dialog.setTitle("How to play " + Main.TITLE);
-            Scene scene = new Scene(webview);
-            dialog.setScene(scene);
-            dialog.sizeToScene();
-            dialog.show();
-            dialog.getIcons().add(new Image(Main.class.getResourceAsStream("view/res/icon.png")));
-
-        }catch(IOException |URISyntaxException e) {
-            e.printStackTrace();
-        }
+        webview.getEngine().loadContent(HOW_TO_HTML);
+        final Stage dialog = new Stage();
+        dialog.initOwner(root.getScene().getWindow());
+        dialog.setTitle("How to play " + Main.TITLE);
+        Scene scene = new Scene(webview);
+        dialog.setScene(scene);
+        dialog.sizeToScene();
+        dialog.show();
+        dialog.getIcons().add(new Image(Main.class.getResourceAsStream("view/res/icon.png")));
     }
 
     public void setWelcomePane(BorderPane welcome, WelcomeCtl controller) {
         this.welcomePane = welcome;
         this.welcomeCtl = controller;
     }
+
+    private final static String HOW_TO_HTML = "<!DOCTYPE html>\n" +
+            "<html>\n" +
+            "<head>\n" +
+            "    <style type=\"text/css\">\n" +
+            "        * {font-family:sans-serif;color:#323232}\n" +
+            "        body {background-color: #D6E6FF}\n" +
+            "    </style>\n" +
+            "</head>\n" +
+            "<body>\n" +
+            "<h1>How to play Slam Learning</h1>\n" +
+            "\n" +
+            "<p>It is very simple to start playing Slam Learning:</p>\n" +
+            "<ol>\n" +
+            "    <li>Select one or more word decks you want to learn<br />\n" +
+            "    <span style=\"font-size:small\">Alternatively and additionally, you can also select your own Words decks and questions decks as CSV files.</span></li>\n" +
+            "    <li>You can start the game!</li>\n" +
+            "</ol>\n" +
+            "\n" +
+            "<h2>Slam Learning basics</h2>\n" +
+            "<p>The goal of the game is to completely reveal the generated grid. For this, you will have two repeated steps:</p>\n" +
+            "<ol style=\"list-style-type: upper-alpha;\">\n" +
+            "    <li><strong>Guess a letter</strong><br />\n" +
+            "        <ul>\n" +
+            "            <li>You need to answer a question to find some unrevealed letter in the grid</li>\n" +
+            "            <li>If you answer is wrong, you will restart to step A.</li>\n" +
+            "            <li>If you answer is correct, you will have the explanation and go to the next step.</li>\n" +
+            "        </ul>\n" +
+            "    </li>\n" +
+            "    <li><strong>Pick and guess a word</strong><br />\n" +
+            "        <ul>\n" +
+            "            <li>You can now click on any word you like on the grid to select it.<br />Be careful not to select a letter common to two words: the game can't know the one you meant!</li>\n" +
+            "            <li>Once a word is selected, you will have a definition to help you find the correct answer.</li>\n" +
+            "            <li>If you guess right, the word will be revealed on the grid.</li>\n" +
+            "            <li>Either way, you will restart to step A.</li>\n" +
+            "        </ul>\n" +
+            "    </li>\n" +
+            "</ol>\n" +
+            "</body>\n" +
+            "</html>";
 }
