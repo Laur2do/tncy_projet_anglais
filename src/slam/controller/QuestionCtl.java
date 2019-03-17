@@ -4,6 +4,7 @@ import javafx.event.ActionEvent;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import slam.model.Game;
 import slam.model.Question;
@@ -24,6 +25,7 @@ public class QuestionCtl implements Observer {
     private final Label question;
     private final TextField answer;
     private final Label messageLabel;
+    private final Label messageDetail;
 
 
     public QuestionCtl(GridCtl gridCtl, VBox questionPane) {
@@ -35,6 +37,7 @@ public class QuestionCtl implements Observer {
         this.question = (Label) this.questionPane.lookup("#question");
         this.answer = (TextField) this.questionPane.lookup("#answer");
         this.messageLabel = (Label) this.questionPane.lookup("#message");
+        this.messageDetail = (Label) this.questionPane.lookup("#messageDetail");
 
         UnaryOperator<TextFormatter.Change> modifyChange = c -> {
             if (c.isContentChange()) {
@@ -74,7 +77,14 @@ public class QuestionCtl implements Observer {
     }
 
     public void cleanMessage() {
+        answer.setMaxHeight(Region.USE_COMPUTED_SIZE);
+        answer.setMinHeight(Region.USE_COMPUTED_SIZE);
+
         messageLabel.setText("");
+
+        messageDetail.setText("");
+        messageDetail.setMaxHeight(0);
+        messageDetail.setMinHeight(0);
     }
     private void displayWrongAnswerMessage() {
         printDebugLn("Wrong! Correct answer was: " + this.currentQuestion.getLetter());
@@ -93,6 +103,10 @@ public class QuestionCtl implements Observer {
 
 
     private void displayGoodAnswerMessage() {
+
+        answer.setMaxHeight(0);
+        answer.setMinHeight(0);
+
         printDebugLn("Correct!");
         if (this.currentQuestion.getExplanation() != null) {
             printDebugLn("\tBecause " + this.currentQuestion.getExplanation());
@@ -103,9 +117,13 @@ public class QuestionCtl implements Observer {
         if (this.currentQuestion.getExplanation() != null) {
             contentText += ", because " + this.currentQuestion.getExplanation();
         }
-        messageLabel.setText(contentText + ".\n Click on a word to guess it!");
+        messageLabel.setText(contentText);
         messageLabel.getStyleClass().clear();
         messageLabel.getStyleClass().add("success");
+
+        messageDetail.setText("Click on a word to guess it!");
+        messageDetail.setMaxHeight(Region.USE_COMPUTED_SIZE);
+        messageDetail.setMinHeight(Region.USE_COMPUTED_SIZE);
 
         this.gridCtl.setEnableGuess(true, this);
     }
@@ -128,7 +146,6 @@ public class QuestionCtl implements Observer {
             messageLabel.setText("Please enter a valid letter");
             messageLabel.getStyleClass().clear();
             messageLabel.getStyleClass().add("critical-error");
-            WindowCtl.packWindow();
             return;
         }
 
@@ -136,7 +153,6 @@ public class QuestionCtl implements Observer {
             displayWrongAnswerMessage();
             this.answer.setText("");
             this.setNewQuestion();
-            WindowCtl.packWindow();
             return;
         } else {
             displayGoodAnswerMessage();
@@ -151,7 +167,6 @@ public class QuestionCtl implements Observer {
         this.answer.setText("");
         this.answer.setVisible(false);
         this.question.setText("");
-        WindowCtl.packWindow();
     }
 
     public void update(Observable obs, Object obj) {

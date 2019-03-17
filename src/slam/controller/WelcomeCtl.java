@@ -13,13 +13,12 @@ import javafx.util.StringConverter;
 import slam.Main;
 import slam.model.Game;
 import slam.model.Grid;
+import slam.model.loader.DataLoader;
+import slam.model.loader.InvalidWordFileException;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class WelcomeCtl {
 
@@ -47,7 +46,7 @@ public class WelcomeCtl {
         if (wordsFile == null) {
             WindowCtl.showErrorAlert(wordsDir, new IOException("Can't read directory!"));
         } else {
-            deckSelector.setConverter(new StringConverter<File>() {
+            this.deckSelector.setConverter(new StringConverter<File>() {
                 @Override
                 public String toString(File f) {
                     return f.getName();
@@ -58,36 +57,36 @@ public class WelcomeCtl {
                     return wordsDir.toPath().resolve(filename).toFile();
                 }
             });
-            deckSelector.getItems().clear();
-            deckSelector.getItems().addAll(Arrays.asList(wordsFile));
+            this.deckSelector.getItems().clear();
+            this.deckSelector.getItems().addAll(Arrays.asList(wordsFile));
         }
         loadQuestions();
     }
 
     public void loadWordFile() {
-        if (isSelecting) {
+        if (this.isSelecting) {
             return;
         }
-        isSelecting = true;
-        File selectedWordFile = deckSelector.getSelectionModel().getSelectedItem();
+        this.isSelecting = true;
+        File selectedWordFile = this.deckSelector.getSelectionModel().getSelectedItem();
         if (selectedWordFile == null) {
             return;
         }
         Pair<Integer, Collection<File>> result = loadWordFile(Collections.singleton(selectedWordFile));
         if (result.getValue().size() == 1) {
-            deckSelector.getItems().remove(selectedWordFile);
+            this.deckSelector.getItems().remove(selectedWordFile);
             // Clearing selection after removal triggers a IndexOutOfBoundsException from the deckSelector's items ListChangeListener
             // It seems harmless and there doesn't seem to be an easy way to fix this.
-            deckSelector.getSelectionModel().clearSelection();
+            this.deckSelector.getSelectionModel().clearSelection();
 
-            if (deckSelector.getItems().isEmpty()) {
-                deckSelector.setDisable(false);
+            if (this.deckSelector.getItems().isEmpty()) {
+                this.deckSelector.setDisable(false);
             }
             if (Game.getInstance().canStart()) {
-                startRandomGame.setDisable(false);
+                this.startRandomGame.setDisable(false);
             }
         }
-        isSelecting = false;
+        this.isSelecting = false;
     }
 
     public void setPanes(BorderPane centerBorderPane, VBox questionPane) {
@@ -97,12 +96,12 @@ public class WelcomeCtl {
 
     public void reset() {
         initialize();
-        isSelecting = false;
+        this.isSelecting = false;
     }
 
     public void startRandomGame() {
         if (Game.getInstance().canStart()) {
-            WindowCtl.newRandomGrid(root, (Grid g) -> {
+            WindowCtl.newRandomGrid(this.root.getParent(), (Grid g) -> {
                 if( g == null) {
                     return null;
                 }
@@ -117,13 +116,12 @@ public class WelcomeCtl {
 
                     GridCtl gridCtl = new GridCtl(gridPane);
                     gridCtl.updateGridPane();
-                    QuestionCtl questionCtl = new QuestionCtl(gridCtl, questionPane);
+                    QuestionCtl questionCtl = new QuestionCtl(gridCtl, this.questionPane);
                     questionCtl.setNewQuestion();
 
                     this.centerBorderPane.setBottom(this.questionPane);
                     this.questionPane.setVisible(true);
                     this.centerBorderPane.getCenter().setVisible(true);
-                    WindowCtl.showMessage(AlertType.INFORMATION, "Random grid generated!", "");
                     WindowCtl.packWindow();
                 } catch (IOException ioe) {
                     ioe.printStackTrace();
@@ -150,10 +148,27 @@ public class WelcomeCtl {
         if (selectedWordFiles == null) {
             return;
         }
-        loadWordFile(selectedWordFiles);
+        ArrayList<File> correctWordFiles = new ArrayList<>();
+        for(File f : selectedWordFiles) {
+            try {
+                DataLoader.loadWordFile(f.getAbsolutePath(), true);
+                correctWordFiles.add(f);
+            }catch(InvalidWordFileException iwfe) {
+                WindowCtl.showPopup(AlertType.ERROR,
+                        "Error in Word file",
+                        iwfe.getMessage());
+                System.err.println("Invalid Word file " + f);
+                iwfe.printStackTrace();
+            }
+        }
+
+        deckSelector.getItems().addAll(selectedWordFiles);
+        WindowCtl.showMessage(AlertType.CONFIRMATION,
+                "Word(s) file added to the Word decks list",
+                "Words from the " + correctWordFiles.size() + " Word file(s) \n" + WindowCtl.listToPrettyString(correctWordFiles) + "\n can now be loaded!");
     }
 
-    public static void loadQuestions() {
+    private static void loadQuestions() {
         Pair<Integer, Collection<File>> result = WindowCtl.loadAllDefaultQuestions();
         if (result.getValue().size() > 0) {
             WindowCtl.showMessage(AlertType.CONFIRMATION,

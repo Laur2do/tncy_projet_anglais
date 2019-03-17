@@ -15,7 +15,7 @@ public class DataLoader {
      * @return The number of line correctly parsed
      * @throws InvalidWordFileException When the file is incorrect
      */
-    public static int loadWordFile(String path) throws InvalidWordFileException {
+    public static int loadWordFile(String path, boolean checkonly) throws InvalidWordFileException {
         int lineNumber = 1;
         int loadedWords = 0;
         try {
@@ -39,7 +39,9 @@ public class DataLoader {
                     case 2:
                         try {
                             Word w1 = new Word(tabStrings[0], tabStrings[1], null);
-                            Game.getInstance().addWord(path, w1);
+                            if( ! checkonly) {
+                                Game.getInstance().addWord(path, w1);
+                            }
                             loadedWords++;
                         } catch (WordException e) {
                             System.err.println("Tried to create an invalid content with Word(" + tabStrings[0] + ", " + tabStrings[1] + ", null)");
@@ -48,7 +50,9 @@ public class DataLoader {
                     case 3:
                         try {
                             Word w2 = new Word(tabStrings[0], tabStrings[1], tabStrings[2]);
-                            Game.getInstance().addWord(path, w2);
+                            if( ! checkonly) {
+                                Game.getInstance().addWord(path, w2);
+                            }
                             loadedWords++;
                         } catch (WordException e) {
                             System.err.println("Tried to create an invalid content with Word(" + tabStrings[0] + ", " + tabStrings[1] + ", " + tabStrings[2] + ")");

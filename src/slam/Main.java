@@ -12,7 +12,7 @@ import slam.controller.WindowCtl;
 
 public class Main extends Application {
 
-    private final static boolean DEBUG = false;
+    private final static boolean DEBUG = true;
     public final static String TITLE = "Slam Learning";
 
     public static void printDebugLn(Object obj) {

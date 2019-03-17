@@ -5,6 +5,7 @@ import slam.model.loader.InvalidQuestionFileException;
 import slam.model.loader.InvalidWordFileException;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Observable;
 
@@ -66,6 +67,10 @@ public class Game extends Observable {
         return wordCount >= Grid.MIN_WORDS_COUNT && questionCount > 0;
     }
 
+    public Collection<String> getWordDecks() {
+        return this.words.keySet();
+    }
+
     public void addWord(String type, Word word) {
         if (this.words.containsKey(word.getContent())) {
             System.err.println("Warning: adding word entry which is already present. Overriding previous entry.");
@@ -92,7 +97,7 @@ public class Game extends Observable {
     }
 
     public int loadWords(String filePath) throws InvalidWordFileException {
-        return DataLoader.loadWordFile(filePath);
+        return DataLoader.loadWordFile(filePath, false);
     }
 
     public void generateRandomCurrentGrid() {

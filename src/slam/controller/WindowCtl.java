@@ -61,7 +61,7 @@ public class WindowCtl {
     }
 
     public static void packWindow() {
-        if(statusRef != null) {
+        if (statusRef != null) {
             Window w = statusRef.getScene().getWindow();
             w.sizeToScene();
         }
@@ -101,7 +101,7 @@ public class WindowCtl {
         }
     }
 
-    private static void showPopup(AlertType type, String title, String message) {
+    public static void showPopup(AlertType type, String title, String message) {
         Alert confirm = new Alert(type);
 
         confirm.setTitle(title);
@@ -143,7 +143,7 @@ public class WindowCtl {
         int wordsLoaded = 0;
         for (File wordFile : wordFiles) {
             try {
-                wordsLoaded += DataLoader.loadWordFile(wordFile.getCanonicalPath());
+                wordsLoaded += DataLoader.loadWordFile(wordFile.getCanonicalPath(), false);
                 loadedWordFiles.add(wordFile);
             } catch (IOException ioe) {
                 System.err.println("System error while loading Word file " + wordFile);
@@ -153,7 +153,7 @@ public class WindowCtl {
                 showPopup(AlertType.ERROR,
                         "Error in Word file",
                         iwfe.getMessage());
-                System.err.println("Invalid Grid file " + wordFile);
+                System.err.println("Invalid Word file " + wordFile);
                 iwfe.printStackTrace();
             }
         }
@@ -244,35 +244,42 @@ public class WindowCtl {
     }
 
     public static void newRandomGrid(Node n, Callback<Grid, Void> cb) {
-        if ( !Game.getInstance().canStart()) {
+        if (!Game.getInstance().canStart()) {
             return;
         }
         n.setCursor(Cursor.WAIT);
         n.setDisable(true);
-        new Thread(() -> {
+        showMessage(AlertType.INFORMATION,
+                "Generating random Grid",
+                "Generating random Grid with " + listToPrettyString(Game.getInstance().getWordDecks()) + ". Please wait...");
+        Thread gridGenerationThread = new Thread(() -> {
             Game.getInstance().generateRandomCurrentGrid();
             printDebugLn(Game.getInstance().getCurrentGrid());
             Platform.runLater(() -> {
                 Game.getInstance().notifyObservers();
+                WindowCtl.showMessage(AlertType.INFORMATION, "Random grid generated!", "");
                 n.setCursor(Cursor.DEFAULT);
                 n.setDisable(false);
                 if (cb != null) {
                     cb.call(Game.getInstance().getCurrentGrid());
                 }
             });
-        }).start();
+        });
+        gridGenerationThread.start();
     }
 
     public void newRandomGrid() {
-        newRandomGrid(root, null);
-        packWindow();
+        newRandomGrid(this.root, (Grid g) -> {
+            packWindow();
+            return null;
+        });
     }
 
     public void newGame() {
         Game.getInstance().resetGame();
-        welcomeCtl.reset();
-        ((BorderPane)root.getCenter()).setCenter(welcomePane);
-        ((BorderPane)root.getCenter()).setBottom(null);
+        this.welcomeCtl.reset();
+        ((BorderPane) this.root.getCenter()).setCenter(this.welcomePane);
+        ((BorderPane) this.root.getCenter()).setBottom(null);
         packWindow();
     }
 
@@ -293,7 +300,7 @@ public class WindowCtl {
         alert.showAndWait();
         ButtonType result = alert.getResult();
 
-        if( result.getButtonData().isDefaultButton()) {
+        if (result.getButtonData().isDefaultButton()) {
             printDebugLn("Exiting");
             Stage stage = (Stage) root.getScene().getWindow();
             stage.close();
@@ -301,7 +308,7 @@ public class WindowCtl {
     }
 
     public void about() {
-        String about = Main.TITLE+" is a Java implementation of the TV French game 'Slam!', made for a TELECOM Nancy 2A English project.";
+        String about = Main.TITLE + " is a Java implementation of the TV French game 'Slam!', made for a TELECOM Nancy 2A English project.";
         about += "\n\n";
         about += "March 2018\n\n";
         about += "Made by:\n";
