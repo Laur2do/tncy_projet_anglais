@@ -32,7 +32,7 @@ public class Main extends Application {
         primaryStage.getIcons().add(new Image(Main.class.getResourceAsStream("view/res/icon.png")));
 
         // Set the scene from the root
-        Scene scene = new Scene(rootPane);
+        Scene scene = new Scene(rootPane, 1280, 860);
         scene.getStylesheets().add(Main.class.getResource("view/res/style.css").toExternalForm());
 
         primaryStage.setScene(scene);

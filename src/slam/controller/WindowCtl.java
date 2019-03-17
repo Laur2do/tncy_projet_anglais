@@ -8,7 +8,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
@@ -58,13 +57,6 @@ public class WindowCtl {
 
 
     public WindowCtl() {
-    }
-
-    public static void packWindow() {
-        if (statusRef != null) {
-            Window w = statusRef.getScene().getWindow();
-            w.sizeToScene();
-        }
     }
 
     @FXML
@@ -171,19 +163,6 @@ public class WindowCtl {
         return fc.showOpenMultipleDialog(window);
     }
 
-    public void fileLoadWords() {
-        List<File> selectedWordFiles = CSVFileSelector(root.getScene().getWindow());
-
-        Pair<Integer, Collection<File>> loadedWords = loadWords(selectedWordFiles);
-        int loadedFiles = loadedWords.getValue().size();
-
-        if (loadedFiles > 0) {
-            showMessage(AlertType.INFORMATION,
-                    "Word file(s) loaded!",
-                    loadedWords.getKey() + " Words from the " + loadedFiles + " Word file(s) \n" + listToPrettyString(loadedWords.getValue()) + "\n have been loaded successfully!");
-        }
-    }
-
     public static Pair<Integer, Collection<File>> loadAllDefaultQuestions() {
         File questionsDir = new File("data/questions");
         File[] questionsFiles = questionsDir.listFiles(CSVFileFilter);
@@ -216,10 +195,6 @@ public class WindowCtl {
         }
         printDebugLn("Loaded " + loadedQuestions + " questions from " + loadedQuestionFiles.size() + " Question file(s): " + loadedQuestionFiles);
         return new Pair<>(loadedQuestions, loadedQuestionFiles);
-    }
-
-    public void fileLoadQuestions() {
-        fileLoadQuestions(this.root.getScene().getWindow());
     }
 
     public static void fileLoadQuestions(Window w) {
@@ -269,10 +244,7 @@ public class WindowCtl {
     }
 
     public void newRandomGrid() {
-        newRandomGrid(this.root, (Grid g) -> {
-            packWindow();
-            return null;
-        });
+        newRandomGrid(this.root, null);
     }
 
     public void newGame() {
@@ -280,7 +252,6 @@ public class WindowCtl {
         this.welcomeCtl.reset();
         ((BorderPane) this.root.getCenter()).setCenter(this.welcomePane);
         ((BorderPane) this.root.getCenter()).setBottom(null);
-        packWindow();
     }
 
     public void reset() {
@@ -290,17 +261,29 @@ public class WindowCtl {
         printDebugLn(Game.getInstance().getCurrentGrid());
     }
 
+    private void configurePopup(Alert alert) {
+        Window alertWindow = alert.getDialogPane().getScene().getWindow();
+        alertWindow.sizeToScene();
+        alertWindow.centerOnScreen();
+        alertWindow.setOnCloseRequest(event -> alertWindow.hide());
+
+        alert.initOwner(root.getScene().getWindow());
+        alert.initModality(Modality.WINDOW_MODAL);
+    }
+
     public void exit() {
         Alert alert = new Alert(AlertType.CONFIRMATION);
         alert.setTitle("Are you sure you want to quit?");
-        alert.setHeaderText("Do you already feel prepared enough to pass your TOEIC?");
-        alert.getDialogPane().getScene().getWindow().centerOnScreen();
-        alert.initModality(Modality.WINDOW_MODAL);
+        alert.setHeaderText(alert.getTitle());
+        alert.setContentText("Do you already feel prepared enough to pass your TOEIC?");
+
+        configurePopup(alert);
 
         alert.showAndWait();
+
         ButtonType result = alert.getResult();
 
-        if (result.getButtonData().isDefaultButton()) {
+        if (result != null && result.getButtonData().isDefaultButton()) {
             printDebugLn("Exiting");
             Stage stage = (Stage) root.getScene().getWindow();
             stage.close();
@@ -315,14 +298,14 @@ public class WindowCtl {
         about += " - Laury de DONATO\n";
         about += " - Marie TUAUDEN\n";
         printDebugLn(about);
-        Dialog d = new Dialog();
-        Window dialogWindow = d.getDialogPane().getScene().getWindow();
-        dialogWindow.setOnCloseRequest(event -> dialogWindow.hide());
-        d.initOwner(root.getScene().getWindow());
-        d.setTitle("About " + Main.TITLE);
-        d.setHeaderText(d.getTitle());
-        d.setContentText(about);
-        d.show();
+        Alert alert = new Alert(AlertType.NONE);
+        alert.setTitle("About " + Main.TITLE);
+        alert.setHeaderText(alert.getTitle());
+        alert.setContentText(about);
+
+        configurePopup(alert);
+
+        alert.showAndWait();
     }
 
     public void howTo() {

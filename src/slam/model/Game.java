@@ -1,5 +1,6 @@
 package slam.model;
 
+import javafx.application.Platform;
 import slam.model.loader.DataLoader;
 import slam.model.loader.InvalidQuestionFileException;
 import slam.model.loader.InvalidWordFileException;
@@ -105,6 +106,7 @@ public class Game extends Observable {
         this.currentGrid = new Grid();
         this.currentGrid.compute();
         canGuessWord = false;
+        Platform.runLater(this::notifyObservers);
     }
 
     public void notifyObservers() {

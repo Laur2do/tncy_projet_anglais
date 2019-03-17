@@ -175,6 +175,10 @@ public class GridCtl implements Observer {
     }
 
     public void update(Observable obs, Object obj) {
+        if( this.questionPane != null) {
+            BorderPane centerBorderPane = ((BorderPane) this.gridPane.getParent());
+            centerBorderPane.setBottom(this.questionPane);
+        }
         this.updateGridPane();
     }
 }

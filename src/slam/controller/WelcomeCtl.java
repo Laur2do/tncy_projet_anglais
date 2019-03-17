@@ -26,7 +26,7 @@ public class WelcomeCtl {
     private BorderPane root;
 
     @FXML
-    private ComboBox<File> deckSelector;
+    private ComboBox<File> themeSelector;
 
     @FXML
     private Button startRandomGame;
@@ -46,7 +46,7 @@ public class WelcomeCtl {
         if (wordsFile == null) {
             WindowCtl.showErrorAlert(wordsDir, new IOException("Can't read directory!"));
         } else {
-            this.deckSelector.setConverter(new StringConverter<File>() {
+            this.themeSelector.setConverter(new StringConverter<File>() {
                 @Override
                 public String toString(File f) {
                     return f.getName();
@@ -57,8 +57,8 @@ public class WelcomeCtl {
                     return wordsDir.toPath().resolve(filename).toFile();
                 }
             });
-            this.deckSelector.getItems().clear();
-            this.deckSelector.getItems().addAll(Arrays.asList(wordsFile));
+            this.themeSelector.getItems().clear();
+            this.themeSelector.getItems().addAll(Arrays.asList(wordsFile));
         }
         loadQuestions();
     }
@@ -68,19 +68,19 @@ public class WelcomeCtl {
             return;
         }
         this.isSelecting = true;
-        File selectedWordFile = this.deckSelector.getSelectionModel().getSelectedItem();
+        File selectedWordFile = this.themeSelector.getSelectionModel().getSelectedItem();
         if (selectedWordFile == null) {
             return;
         }
         Pair<Integer, Collection<File>> result = loadWordFile(Collections.singleton(selectedWordFile));
         if (result.getValue().size() == 1) {
-            this.deckSelector.getItems().remove(selectedWordFile);
-            // Clearing selection after removal triggers a IndexOutOfBoundsException from the deckSelector's items ListChangeListener
+            this.themeSelector.getItems().remove(selectedWordFile);
+            // Clearing selection after removal triggers a IndexOutOfBoundsException from the themeSelector's items ListChangeListener
             // It seems harmless and there doesn't seem to be an easy way to fix this.
-            this.deckSelector.getSelectionModel().clearSelection();
+            this.themeSelector.getSelectionModel().clearSelection();
 
-            if (this.deckSelector.getItems().isEmpty()) {
-                this.deckSelector.setDisable(false);
+            if (this.themeSelector.getItems().isEmpty()) {
+                this.themeSelector.setDisable(false);
             }
             if (Game.getInstance().canStart()) {
                 this.startRandomGame.setDisable(false);
@@ -122,7 +122,6 @@ public class WelcomeCtl {
                     this.centerBorderPane.setBottom(this.questionPane);
                     this.questionPane.setVisible(true);
                     this.centerBorderPane.getCenter().setVisible(true);
-                    WindowCtl.packWindow();
                 } catch (IOException ioe) {
                     ioe.printStackTrace();
                 }
@@ -162,7 +161,7 @@ public class WelcomeCtl {
             }
         }
 
-        deckSelector.getItems().addAll(selectedWordFiles);
+        themeSelector.getItems().addAll(selectedWordFiles);
         WindowCtl.showMessage(AlertType.CONFIRMATION,
                 "Word(s) file added to the Word decks list",
                 "Words from the " + correctWordFiles.size() + " Word file(s) \n" + WindowCtl.listToPrettyString(correctWordFiles) + "\n can now be loaded!");

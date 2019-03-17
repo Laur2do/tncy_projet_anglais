@@ -3,6 +3,7 @@ package slam.model.loader;
 import slam.model.*;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
@@ -40,7 +41,7 @@ public class DataLoader {
                         try {
                             Word w1 = new Word(tabStrings[0], tabStrings[1], null);
                             if( ! checkonly) {
-                                Game.getInstance().addWord(path, w1);
+                                Game.getInstance().addWord(new File(path).getName(), w1);
                             }
                             loadedWords++;
                         } catch (WordException e) {
@@ -51,7 +52,7 @@ public class DataLoader {
                         try {
                             Word w2 = new Word(tabStrings[0], tabStrings[1], tabStrings[2]);
                             if( ! checkonly) {
-                                Game.getInstance().addWord(path, w2);
+                                Game.getInstance().addWord(new File(path).getName(), w2);
                             }
                             loadedWords++;
                         } catch (WordException e) {

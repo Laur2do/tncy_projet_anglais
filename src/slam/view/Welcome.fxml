@@ -26,12 +26,12 @@
                      <Font name="System Bold" size="34.0" />
                   </font>
                </Label>
-               <Label text="Slam Learning is a word game inspired by the French TV Show 'Slam'. It is designed to help its users learn vocabulary with fun. You can pick one or several word deck to get started!" textAlignment="CENTER" wrapText="true">
+               <Label text="Slam Learning is a word game inspired by the French TV Show 'Slam'. It is designed to help its users learn vocabulary in a fun way. You can pick one or several word deck to get started!" textAlignment="CENTER" wrapText="true">
                   <font>
                      <Font size="14.0" />
                   </font>
                </Label>
-                  <ComboBox fx:id="deckSelector" minWidth="350.0" onAction="#loadWordFile" promptText="Choose your Word deck..." style="-fx-font-size: 20px;" />
+                  <ComboBox fx:id="themeSelector" minWidth="350.0" onAction="#loadWordFile" promptText="Choose your theme..." style="-fx-font-size: 20px;" />
                <HBox alignment="CENTER">
                   <children>
                      <Button fx:id="startRandomGame" defaultButton="true" disable="true" mnemonicParsing="false" onAction="#startRandomGame" text="Start Game">

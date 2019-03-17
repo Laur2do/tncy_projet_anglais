@@ -55,12 +55,12 @@ public class QuestionCtl implements Observer {
     }
 
     public void setNewQuestion() {
+        cleanMessage();
         if( Game.getInstance().getCurrentGrid() == null) {
             this.messageLabel.setText("Please load data");
             this.questionPane.setVisible(true);
             this.question.setVisible(false);
             this.answer.setVisible(false);
-
             return;
         }
 
