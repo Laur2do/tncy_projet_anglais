@@ -130,6 +130,7 @@ public class QuestionCtl implements Observer {
 
 
     public void showCongratulations() {
+        cleanMessage();
         messageLabel.setText("You guess the entire grid, congratulations!");
         messageLabel.getStyleClass().clear();
         messageLabel.getStyleClass().add("congratulations");
@@ -163,6 +164,10 @@ public class QuestionCtl implements Observer {
         Game.getInstance().getCurrentGrid().revealLetter(c);
         printDebugLn(Game.getInstance().getCurrentGrid());
         this.gridCtl.updateGridPane();
+
+        if( Game.getInstance().getCurrentGrid().isRevealed() ) {
+            this.showCongratulations();
+        }
 
         this.answer.setText("");
         this.answer.setVisible(false);
